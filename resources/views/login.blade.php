@@ -13,8 +13,8 @@
 	<form action="/sharereports/public/login" method="post">
 		@csrf
 		<div class="form-group">
-			<label for="loginId">ID</label>
-			<input type="text" id="loginId" class="form-control" name="loginId" value="" required>
+			<label for="loginEmail">ID</label>
+			<input type="text" id="loginEmail" class="form-control" name="loginEmail" value="" required>
 		</div>
 		<div class="form-group">
 			<label for="loginPassword">パスワード</label>
