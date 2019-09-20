@@ -28,40 +28,26 @@ class UserDAO
 
 
 	/**
-	 * ユーザーログイン
+	 * ユーザーのメールアドレスによる検索
 	 *
-	 * @param string $loginEmail メールアドレス
-	 * @param string $loginPassword ログインパスワード
-	 * @return int $userId ユーザーID(メールアドレス未登録:-1, パスワード不一致:0)
+	 * @param string $usMail メールアドレス
+	 * @return User 該当するUserオブジェクト。ただし該当データが無い場合はnull
 	 */
-	public function login(string $loginEmail, string $loginPassword): int
+	public function findByUsMail(string $usMail): ?User
 	{
-		// メールアドレスが登録済みか判定
-		$sqlSelect = "SELECT id FROM users WHERE us_mail = :us_mail";
+		$sqlSelect = "SELECT * FROM users WHERE us_mail = :us_mail";
 		$stmt = $this->db->prepare($sqlSelect);
-		$stmt->bindValue(":us_mail", $loginEmail, PDO::PARAM_STR);
-		$stmt->execute();
-		if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			// 登録済みパスワードと入力されたパスワードが一致しているか判定
-			$sqlSelect = "SELECT id FROM users WHERE id = 1 AND us_password = :us_password";
-			$stmt = $this->db->prepare($sqlSelect);
-			$stmt->bindValue(":id", $row['id'], PDO::PARAM_INT);
-			$stmt->bindValue(":us_password", $loginPassword, PDO::PARAM_STR);
-			$stmt->execute();
-			if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-				// ログイン成功: ユーザーID取得
-				$userId = $row['id'];
-			}
-			else {
-				// パスワード不一致: 0
-				$userId = 0;
-			}
+		$stmt->bindValue(":us_mail", $usMail, PDO::PARAM_STR);
+		$result = $stmt->execute();
+		$user = null;
+		if ($result && $row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$user = new User();
+			$user->setId($row['id']);
+			$user->setUsMail($row['us_mail']);
+			$user->setUsName($row['us_name']);
+			$user->setUsPassword($row['us_password']);
+			$user->setUsAuth($row['us_auth']);
 		}
-		else {
-			// メールアドレスが未登録: -1
-			$userId = -1;
-		}
-		return $userId;
+		return $user;
 	}
-
 }
