@@ -35,7 +35,7 @@ class LoginController extends Controller
 		$UserDAO = new UserDAO($db);
 
 		// ログイン判定
-		$user = $UserDAO->findByUsEmail($loginUsMail, $loginPw);
+		$user = $UserDAO->findByUsMail($loginUsMail, $loginPw);
 		if ($user === null) {
 			$validationMsgs[] = "登録されていないメールアドレスです。正しいメールアドレスを入力するか、アカウントを作成してください。";
 		}
