@@ -10,15 +10,27 @@
 <body>
 	<h1>ログイン</h1>
 
+	@isset($validationMsgs)
+	<section id="errorMsg">
+		<p>以下のメッセージをご確認ください。</p>
+		<ul>
+			@foreach ($validationMsgs as $msg)
+			<li>{{$msg}}</li>
+			@endforeach
+		</ul>
+	</section>
+	@endisset
+
+
 	<form action="/sharereports/public/login" method="post">
 		@csrf
 		<div class="form-group">
-			<label for="loginEmail">ID</label>
-			<input type="text" id="loginEmail" class="form-control" name="loginEmail" value="" required>
+			<label for="loginUsMail">ID</label>
+			<input type="text" id="loginUsMail" class="form-control" name="loginUsMail" value="architshin@websarva.com" required>
 		</div>
 		<div class="form-group">
-			<label for="loginPassword">パスワード</label>
-			<input id="loginPassword" class="form-control" type="password" name="loginPassword">
+			<label for="loginUsPasswd">パスワード</label>
+			<input id="loginUsPasswd" class="form-control" type="password" name="loginUsPasswd" value="hogehoge" required>
 		</div>
 		<button type="submit" class="form-control">ログイン</button>
 	</form>
