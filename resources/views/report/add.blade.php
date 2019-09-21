@@ -25,8 +25,8 @@
 				<div class="row">
 					<div class="col">
 						<label for="datetimepicker1" class="pt-2 pr-2">作業日</label>
-						<div class="input-group date" id="datetimepicker1"  data-target-input="nearest">
-							<input type="text" class="form-control datetimepicker-input"  data-target="#datetimepicker1" />
+						<div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+							<input type="text" class="form-control datetimepicker-input" name="workDate" data-target="#datetimepicker1" />
 							<div class="input-group-prepend" data-target="#datetimepicker1" data-toggle="datetimepicker">
 								<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
 							</div>
@@ -37,7 +37,7 @@
 					<div class="col">
 						<label for="datetimepicker2" class="pt-2 pr-2">作業開始時刻</label>
 						<div class="input-group date" id="datetimepicker2" data-target-input="nearest">
-							<input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" />
+							<input type="text" class="form-control datetimepicker-input" name="workStartTime" data-target="#datetimepicker2" />
 							<div class="input-group-prepend" data-target="#datetimepicker2" data-toggle="datetimepicker">
 								<div class="input-group-text"><i class="far fa-clock"></i></div>
 							</div>
@@ -46,7 +46,7 @@
 					<div class="col">
 						<label for="datetimepicker3" class="pt-2 pr-2">作業終了時刻</label>
 						<div class="input-group date" id="datetimepicker3" data-target-input="nearest">
-							<input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker3" />
+							<input type="text" class="form-control datetimepicker-input" name="workEndTime" data-target="#datetimepicker3" />
 							<div class="input-group-prepend" data-target="#datetimepicker3" data-toggle="datetimepicker">
 								<div class="input-group-text"><i class="far fa-clock"></i></div>
 							</div>
@@ -66,6 +66,15 @@
 						</select>
 					</div>
 				</div>
+				<div class="row">
+					<div class="col">
+						<label for="reportContent" class="pt-2 pr-2">テキストエリアの例</label>
+						<textarea class="form-control" id="reportContent" name="reportContent" rows="3"></textarea>
+					</div>
+				</div>
+			</div>
+			<div class="text-right">
+				<button type="submit" class="btn btn-primary">登録する</button>
 			</div>
 		</form>
 	</div>
