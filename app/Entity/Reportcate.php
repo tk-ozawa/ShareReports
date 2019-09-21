@@ -43,14 +43,14 @@ class Reportcate
 	/**
 	 * 備考
 	 */
-	private $rcNote;
+	private $rcNote;	// rcNoteは`null | string`である為、型指定せず
 
-	public function getRcNote(): ?string
+	public function getRcNote()
 	{
 		return $this->rcNote;
 	}
 
-	public function setRcNote(string $rcNote): void
+	public function setRcNote($rcNote): void
 	{
 		$this->rcNote = $rcNote;
 	}
