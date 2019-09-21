@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 use App\Functions;
+use App\Entity\Report;
 use App\DAO\ReportDAO;
 use App\DAO\ReportcateDAO;
 
@@ -21,6 +22,7 @@ class ReportController extends Controller
 	{
 		$templatePath = "report/list";
 		$assign = [];
+		$validationMsgs = [];
 		if (Functions::loginCheck($request)) {
 			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
 			$assign["validationMsgs"] = $validationMsgs;
@@ -46,22 +48,84 @@ class ReportController extends Controller
 	{
 		$templatePath = "report/add";
 		$assign = [];
+		$validationMsgs = [];
 		if (Functions::loginCheck($request)) {
 			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
 			$assign["validationMsgs"] = $validationMsgs;
 			$templatePath = "login";
 		}
 		else {
-			// 作業日欄用に、現在の年月日を取得
-			$assign['today'] = ['year' => date("Y"), 'month' => date("n"), 'day' => date("j")];
-
 			// reportcatesテーブルの全情報を取得
 			$db = DB::connection()->getPdo();
 			$reportcateDAO = new ReportcateDAO($db);
 			$assign['reportcateList'] = $reportcateDAO->findAll();
 		}
 		return view($templatePath, $assign);
+	}
 
+	/**
+	 * レポート登録処理
+	 */
+	public function add(Request $request)
+	{
+		$templatePath = "report/add";
+		$assign = [];
+		$isRedirect = false;
+		$validationMsgs = [];
+		if (Functions::loginCheck($request)) {
+			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
+			$assign["validationMsgs"] = $validationMsgs;
+			$templatePath = "login";
+		}
+		else {
+			$rp = new Report();
+			$rp->setRpDate($request->input('rpDate'));
+			$rp->setRpTimeFrom($request->input('rpTimeFrom').':00');
+			$rp->setRpTimeTo($request->input('rpTimeTo').':00');
+			$rp->setReportCateId((int)$request->input('reportCateId'));
+			$rp->setRpContent(nl2br($request->input('rpContent')));
+			$rp->setUserId($request->session()->get('usId'));
 
+			// サーバ側バリデーション処理
+			if (strtotime($rp->getRpTimeFrom()) > strtotime($rp->getRpTimeTo())) {
+				$validationMsgs[] = "作業終了時刻が作業開始時刻以下のものが設定されています。正しい時刻を入力してください。";
+			}
+
+			if (empty($validationMsgs)) {
+				$db = DB::connection()->getPdo();
+				$reportDAO = new ReportDAO($db);
+				$rpId = $reportDAO->insert($rp);
+				if ($rpId === -1) {
+					$assign["errorMsg"] = "レポート情報登録に失敗しました。もう一度はじめからやり直してください。";
+					$templatePath = "error";
+				}
+				else {
+					$isRedirect = true;
+				}
+			}
+			else {
+				// レポート登録画面に戻る
+				$reportcateDAO = new ReportcateDAO($db);
+				$assign['reportcateList'] = $reportcateDAO->findAll();
+				$assign['validationMsgs'] = $validationMsgs;
+			}
+		}
+		if ($isRedirect) {
+			$response = redirect("./reports/showList")->with("flashMsg", "レポートID:".$rpId."でレポート情報を登録しました。");
+		}
+		else {
+			$response = view($templatePath, $assign);
+		}
+		return $response;
+	}
+
+	/**
+	 * レポート詳細画面表示処理
+	 */
+	public function showDetail(Request $request)
+	{
+		$templatePath = "report/detail";
+		$assign = [];
+		$request->input('rp');
 	}
 }
