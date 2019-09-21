@@ -8,15 +8,25 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" />
 	<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<title>レポート登録画面</title>
 </head>
 <body>
 	<nav class="navbar navbar-light bg-light">
 		<a href="./showList"><h1>レポート管理システム</h1></a>
-		<ul class="navbar-nav ml-auto">
-			<li class="nav-item"><a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a></li>
-		</ul>
+		<li class="nav-item"><a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a></li>
 	</nav>
+
+	@isset($validationMsgs)
+	<section id="errorMsg">
+		<p>以下のメッセージをご確認ください。</p>
+		<ul>
+			@foreach ($validationMsgs as $msg)
+				<li>{{$msg}}</li>
+			@endforeach
+		</ul>
+	</section>
+	@endisset
 
 	<div class="container">
 		<form action="./add" method="post">
@@ -26,7 +36,7 @@
 					<div class="col">
 						<label for="datetimepicker1" class="pt-2 pr-2">作業日</label>
 						<div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-							<input type="text" class="form-control datetimepicker-input" name="workDate" data-target="#datetimepicker1" />
+							<input type="text" class="form-control datetimepicker-input" name="rpDate" data-target="#datetimepicker1" required />
 							<div class="input-group-prepend" data-target="#datetimepicker1" data-toggle="datetimepicker">
 								<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
 							</div>
@@ -37,7 +47,7 @@
 					<div class="col">
 						<label for="datetimepicker2" class="pt-2 pr-2">作業開始時刻</label>
 						<div class="input-group date" id="datetimepicker2" data-target-input="nearest">
-							<input type="text" class="form-control datetimepicker-input" name="workStartTime" data-target="#datetimepicker2" />
+							<input type="text" class="form-control datetimepicker-input" name="rpTimeFrom" data-target="#datetimepicker2" required />
 							<div class="input-group-prepend" data-target="#datetimepicker2" data-toggle="datetimepicker">
 								<div class="input-group-text"><i class="far fa-clock"></i></div>
 							</div>
@@ -46,7 +56,7 @@
 					<div class="col">
 						<label for="datetimepicker3" class="pt-2 pr-2">作業終了時刻</label>
 						<div class="input-group date" id="datetimepicker3" data-target-input="nearest">
-							<input type="text" class="form-control datetimepicker-input" name="workEndTime" data-target="#datetimepicker3" />
+							<input type="text" class="form-control datetimepicker-input" name="rpTimeTo" data-target="#datetimepicker3" required />
 							<div class="input-group-prepend" data-target="#datetimepicker3" data-toggle="datetimepicker">
 								<div class="input-group-text"><i class="far fa-clock"></i></div>
 							</div>
@@ -56,7 +66,7 @@
 				<div class="row">
 					<div class="col">
 						<label for="reportcates" class="pt-2 pr-2">作業種類</label>
-						<select class="custom-select" id="reportcates" name="reportcate" required>
+						<select class="custom-select" id="reportcates" name="reportCateId" required>
 							<option selected disabled value="">選択...</option>
 							@foreach ($reportcateList as $reportcate)
 								<option value="{{ $reportcate->getId() }}">
@@ -68,8 +78,8 @@
 				</div>
 				<div class="row">
 					<div class="col">
-						<label for="reportContent" class="pt-2 pr-2">テキストエリアの例</label>
-						<textarea class="form-control" id="reportContent" name="reportContent" rows="3"></textarea>
+						<label for="reportContent" class="pt-2 pr-2">作業内容</label>
+						<textarea class="form-control" id="reportContent" name="rpContent" rows="3" required></textarea>
 					</div>
 				</div>
 			</div>
@@ -106,7 +116,7 @@
 					prevCentury: '前世紀',
 					nextCentury: '次世紀'
 				},
-				format: 'YYYY/MM/DD',
+				format: 'YYYY-MM-DD',
 				locale: moment.locale('ja', {
 					week: { dow: 0 }
 				}),
