@@ -21,7 +21,6 @@
 	</section>
 	@endisset
 
-
 	<form action="/sharereports/public/login" method="post">
 		@csrf
 		<div class="form-group">
