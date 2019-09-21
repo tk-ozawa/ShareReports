@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 use App\Functions;
 use App\DAO\ReportDAO;
+use App\DAO\ReportcateDAO;
 
 /**
  * レポート管理に関するコントローラクラス
@@ -14,11 +15,11 @@ use App\DAO\ReportDAO;
 class ReportController extends Controller
 {
 	/**
-	 * レポート一覧画面表示処理
+	 * レポートリスト画面表示処理
 	 */
 	public function showList(Request $request)
 	{
-		$templatePath = "report/reportList";
+		$templatePath = "report/list";
 		$assign = [];
 		if (Functions::loginCheck($request)) {
 			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
@@ -26,6 +27,7 @@ class ReportController extends Controller
 			$templatePath = "login";
 		}
 		else {
+			// reportsテーブルの全情報を取得
 			$db = DB::connection()->getPdo();
 			$reportDAO = new ReportDAO($db);
 			$reportList = $reportDAO->findAll();
@@ -37,5 +39,29 @@ class ReportController extends Controller
 		return view($templatePath, $assign);
 	}
 
+	/**
+	 * レポート登録画面表示処理
+	 */
+	public function goAdd(Request $request)
+	{
+		$templatePath = "report/add";
+		$assign = [];
+		if (Functions::loginCheck($request)) {
+			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
+			$assign["validationMsgs"] = $validationMsgs;
+			$templatePath = "login";
+		}
+		else {
+			// 作業日欄用に、現在の年月日を取得
+			$assign['today'] = ['year' => date("Y"), 'month' => date("n"), 'day' => date("j")];
 
+			// reportcatesテーブルの全情報を取得
+			$db = DB::connection()->getPdo();
+			$reportcateDAO = new ReportcateDAO($db);
+			$assign['reportcateList'] = $reportcateDAO->findAll();
+		}
+		return view($templatePath, $assign);
+
+
+	}
 }
