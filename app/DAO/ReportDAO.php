@@ -34,20 +34,45 @@ class ReportDAO
 		$sqlSelect = "SELECT * FROM reports ORDER BY rp_date";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->execute();
-		$reportList = [];
+		$rpList = [];
 		while ($row = $stmt->fetch()) {
-			$report = new Report();
-			$report->setId($row['id']);
-			$report->setRpDate($row['rp_date']);
-			$report->setRpTimeFrom($row['rp_time_from']);
-			$report->setRpTimeTo($row['rp_time_to']);
-			$report->setRpContent($row['rp_content']);
-			$report->setRpCreatedAt($row['rp_created_at']);
-			$report->setReportCateId($row['reportcate_id']);
-			$report->setUserId($row['user_id']);
+			$rp = new Report();
+			$rp->setId($row['id']);
+			$rp->setRpDate($row['rp_date']);
+			$rp->setRpTimeFrom($row['rp_time_from']);
+			$rp->setRpTimeTo($row['rp_time_to']);
+			$rp->setRpContent($row['rp_content']);
+			$rp->setRpCreatedAt($row['rp_created_at']);
+			$rp->setReportCateId($row['reportcate_id']);
+			$rp->setUserId($row['user_id']);
 
-			$reportList[] = $report;
+			$rpList[] = $rp;
 		}
-		return $reportList;
+		return $rpList;
+	}
+
+
+	/**
+	 * レポート情報登録
+	 *
+	 * @param Report $rp 登録対象のレポート情報
+	 */
+	public function insert(Report $rp): int
+	{
+		$sqlInsert = "INSERT INTO reports(rp_date, rp_time_from, rp_time_to, rp_content, rp_created_at, reportcate_id, user_id) VALUES (:rp_date, :rp_time_from, :rp_time_to, :rp_content, NOW(), :reportcate_id, :user_id)";
+		$stmt = $this->db->prepare($sqlInsert);
+		$stmt->bindValue(":rp_date", $rp->getRpDate(), PDO::PARAM_STR);
+		$stmt->bindValue(":rp_time_from", $rp->getRpTimeFrom(), PDO::PARAM_STR);
+		$stmt->bindValue(":rp_time_to", $rp->getRpTimeTo(), PDO::PARAM_STR);
+		$stmt->bindValue(":rp_content", $rp->getRpContent(), PDO::PARAM_STR);
+		$stmt->bindValue(":reportcate_id", $rp->getReportCateId(), PDO::PARAM_INT);
+		$stmt->bindValue(":user_id", $rp->getUserId(), PDO::PARAM_INT);
+		$result = $stmt->execute();
+		if ($result) {
+			$rpId = $this->db->lastInsertId();
+		} else {
+			$rpId = -1;
+		}
+		return $rpId;
 	}
 }
