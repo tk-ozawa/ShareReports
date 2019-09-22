@@ -70,3 +70,17 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## インストールについて
+本リポジトリをclone後、storeManager内にて以下を実行。
+1. `$ composer install`  
+2. `$ chmod -R 777 storage/`
+3. `$ chmod 777 bootstrap/cache/`
+4. `$ cp .env.example .env`
+5. `$ php artisan key:generate`
+6. `$ php artisan config:clear`
+7. .envにて、以下の項目を変更。  
+	　`DB_DATABASE=store_manager`  
+	　`DB_USERNAME=[root]`  
+	　`DB_PASSWORD=[任意]`
+8. phpMyAdmin等のDBクライアントで`sharerepo`の名前でDBを作成し、sharereports.sqlをインポートする。
