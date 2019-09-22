@@ -10,7 +10,7 @@
 </head>
 <body>
 	<nav class="navbar navbar-light bg-light">
-		<a href="../list"><h1>レポート管理システム</h1></a>
+		<a href="../showList"><h1>レポート管理システム</h1></a>
 		<ul class="navbar-nav ml-auto">
 			<li class="nav-item"><a class="btn btn-primary" href="/sharereports/public/reports/goAdd" role="button">新規作成</a></li>
 			<li class="nav-item"><a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a></li>
@@ -19,7 +19,7 @@
 
 	<nav aria-label="パンくずリスト">
 		<ol class="breadcrumb">
-		<li class="breadcrumb-item"><a href="../list">レポートリスト</a></li>
+		<li class="breadcrumb-item"><a href="../showList">レポートリスト</a></li>
 			<li class="breadcrumb-item active" aria-current="page">レポート詳細</li>
 		</ol>
 	</nav>
