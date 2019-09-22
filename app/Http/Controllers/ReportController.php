@@ -81,17 +81,15 @@ class ReportController extends Controller
 		else {
 			$rp = new Report();
 			$rp->setRpDate($request->input('rpDate'));
-			$rp->setRpTimeFrom($request->input('rpTimeFrom').':00');
-			$rp->setRpTimeTo($request->input('rpTimeTo').':00');
+			$rp->setRpTimeFrom($request->input('rpTimeFrom').':00');	// MySQLのtime型(HH:MM:SS)に合わせる
+			$rp->setRpTimeTo($request->input('rpTimeTo').':00');		// MySQLのtime型(HH:MM:SS)に合わせる
 			$rp->setReportCateId((int)$request->input('reportCateId'));
 			$rp->setRpContent($request->input('rpContent'));
 			$rp->setUserId($request->session()->get('usId'));
-
 			// サーバ側バリデーション処理
 			if (strtotime($rp->getRpTimeFrom()) > strtotime($rp->getRpTimeTo())) {
 				$validationMsgs[] = "作業終了時刻が作業開始時刻以下のものが設定されています。正しい時刻を入力してください。";
 			}
-
 			if (empty($validationMsgs)) {
 				$db = DB::connection()->getPdo();
 				$reportDAO = new ReportDAO($db);
@@ -127,7 +125,6 @@ class ReportController extends Controller
 	{
 		$templatePath = "report/detail";
 		$assign = [];
-
 		if (Functions::loginCheck($request)) {
 			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
 			$assign["validationMsgs"] = $validationMsgs;
@@ -135,17 +132,14 @@ class ReportController extends Controller
 		}
 		else {
 			$db = DB::connection()->getPdo();
-			$reportDAO = new ReportDAO($db);
-
 			// レポート情報
+			$reportDAO = new ReportDAO($db);
 			$rp = $reportDAO->findByRpId($rpId);
-			$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));
-			$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));
-
+			$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));	// HTML上の時刻の形式(HH:MM)に合わせる
+			$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));		// HTML上の時刻の形式(HH:MM)に合わせる
 			// 作業種類情報
 			$reportcateDAO = new ReportcateDAO($db);
 			$rpcate = $reportcateDAO->findById($rp->getReportCateId());
-
 			// 投稿ユーザー情報
 			$userDAO = new UserDAO($db);
 			$us = $userDAO->findById($rp->getUserId());
@@ -155,5 +149,164 @@ class ReportController extends Controller
 			$assign['user'] = $us;
 		}
 		return view($templatePath, $assign);
+	}
+
+	/**
+	 * レポート情報編集画面表示処理
+	 */
+	public function prepareEdit(int $rpId, Request $request)
+	{
+		$templatePath = "report/edit";
+		$assign = [];
+		if (Functions::loginCheck($request)) {
+			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
+			$assign["validationMsgs"] = $validationMsgs;
+			$templatePath = "login";
+		}
+		else {
+			$db = DB::connection()->getPdo();
+			$reportDAO = new ReportDAO($db);
+			$rp = $reportDAO->findByRpId($rpId);
+			if (empty($rp)) {
+				$assign["errorMsg"] = "レポート情報の取得に失敗しました。";
+				$templatePath = "error";
+			}
+			else {
+				$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));	// HTML上の時刻の形式(HH:MM)に合わせる
+				$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));		// HTML上の時刻の形式(HH:MM)に合わせる
+				// 全作業種類取得
+				$reportcateDAO = new ReportcateDAO($db);
+				$rcList = $reportcateDAO->findAll();
+				$assign["report"] = $rp;
+				$assign["reportcateList"] = $rcList;
+			}
+		}
+		return view($templatePath, $assign);
+	}
+
+	/**
+	 * レポート編集処理
+	 */
+	public function edit(Request $request)
+	{
+		$templatePath = "report/edit";
+		$isRedirect = false;
+		$assign = [];
+		if (Functions::loginCheck($request)) {
+			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
+			$assign["validationMsgs"] = $validationMsgs;
+			$templatePath = "login";
+		}
+		else {
+			$rp = new Report();
+			$rp->setId((int)$request->input("rpId"));
+			$rp->setRpDate($request->input("rpDate"));
+			$rp->setRpTimeFrom($request->input("rpTimeFrom").':00');	// MySQLのtime型(HH:MM:SS)に合わせる
+			$rp->setRpTimeTo($request->input("rpTimeTo").':00');		// MySQLのtime型(HH:MM:SS)に合わせる
+			$rp->setRpContent($request->input("rpContent"));
+			$rp->setReportCateId((int)$request->input("reportCateId"));
+			$rp->setUserId($request->session()->get('usId'));
+			$db = DB::connection()->getPdo();
+
+			// サーバ側バリデーション処理
+			if (strtotime($rp->getRpTimeFrom()) > strtotime($rp->getRpTimeTo())) {
+				$validationMsgs[] = "作業終了時刻が作業開始時刻以下のものが設定されています。正しい時刻を入力してください。";
+			}
+			if (empty($validationMsgs)) {
+				$reportDAO = new ReportDAO($db);
+				$result = $reportDAO->update($rp);
+				if (empty($result)) {
+					$assign["errorMsg"] = "レポート情報更新に失敗しました。もう一度はじめからやり直してください。";
+					$templatePath = "error";
+				}
+				else {
+					$isRedirect = true;
+				}
+			}
+			else {
+				// レポート編集画面に戻る
+				$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));	// HTML上の時刻の形式(HH:MM)に合わせる
+				$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));		// HTML上の時刻の形式(HH:MM)に合わせる
+				// 全作業種類取得
+				$reportcateDAO = new ReportcateDAO($db);
+				$rcList = $reportcateDAO->findAll();
+				$assign["report"] = $rp;
+				$assign["reportcateList"] = $rcList;
+				$assign["validationMsgs"] = $validationMsgs;
+			}
+		}
+		if ($isRedirect) {
+			$response = redirect("./reports/showList")->with("flashMsg", "レポートID:".$rp->getID()."でレポート情報を更新しました。");
+		}
+		else {
+			$response = view($templatePath, $assign);
+		}
+		return $response;
+	}
+
+	/**
+	 * レポート削除確認画面表示処理
+	 */
+	public function confirmDelete(int $rpId, Request $request)
+	{
+		$templatePath = "report/confirmDelete";
+		$assign = [];
+		if (Functions::loginCheck($request)) {
+			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
+			$assign["validationMsgs"] = $validationMsgs;
+			$templatePath = "login";
+		}
+		else {
+			$db = DB::connection()->getPdo();
+			// レポート情報
+			$reportDAO = new ReportDAO($db);
+			$rp = $reportDAO->findByRpId($rpId);
+			$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));
+			$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));
+			// 作業種類情報
+			$reportcateDAO = new ReportcateDAO($db);
+			$rpcate = $reportcateDAO->findById($rp->getReportCateId());
+			// 投稿ユーザー情報
+			$userDAO = new UserDAO($db);
+			$us = $userDAO->findById($rp->getUserId());
+			$assign['report'] = $rp;
+			$assign['reportcate'] = $rpcate;
+			$assign['user'] = $us;
+		}
+		return view($templatePath, $assign);
+	}
+
+	/**
+	 * レポート削除処理
+	 */
+	public function delete(Request $request)
+	{
+		$templatePath = "error";
+		$isRedirect = false;
+		$assign = [];
+		if (Functions::loginCheck($request)) {
+			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
+			$assign["validationMsgs"] = $validationMsgs;
+			$templatePath = "login";
+		}
+		else {
+			$rpId = (int)$request->input("deleteRpId");
+			$db = DB::connection()->getPdo();
+			$reportDAO = new ReportDAO($db);
+			$result = $reportDAO->delete($rpId);
+			if ($result) {
+				$isRedirect = true;
+			}
+			else {
+				$assign["errorMsg"] = "レポート情報削除に失敗しました。もう一度はじめからやり直してください。";
+			}
+		}
+		if ($isRedirect) {
+			$response = redirect("./reports/showList")->with("flashMsg", "レポートID:".$rpId."を削除しました。");
+		}
+		else {
+			$response = view($templatePath, $assign);
+		}
+		return $response;
 	}
 }
