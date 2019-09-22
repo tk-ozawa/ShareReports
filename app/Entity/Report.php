@@ -11,16 +11,16 @@ class Report
 	/**
 	 * レポートID
 	 */
-	private $Id;
+	private $id;
 
 	public function getId(): ?int
 	{
-		return $this->Id;
+		return $this->id;
 	}
 
-	public function setId(int $Id): void
+	public function setId(int $id): void
 	{
-		$this->Id = $Id;
+		$this->id = $id;
 	}
 
 
