@@ -18,7 +18,7 @@ Route::post("/reports/add", "ReportController@add");	// レポート登録処理
 Route::get("/reports/detail/{rpId}", "ReportController@showDetail");	// レポート詳細画面表示処理
 
 Route::get("/reports/prepareEdit/{rpId}", "ReportController@prepareEdit");	// レポート編集画面表示処理
-Route::post("reports/edit/{rpId}", "ReportController@edit");	// レポート編集処理
+Route::post("reports/edit", "ReportController@edit");	// レポート編集処理
 
 Route::get("/reports/confirmDelete/{rpId}", "ReportController@confirmDelete");	// レポート削除確認画面表示処理
-Route::post("/reports/delete/{rpId}", "ReportController@delete");	// レポート削除処理
+Route::post("/reports/delete", "ReportController@delete");	// レポート削除処理
