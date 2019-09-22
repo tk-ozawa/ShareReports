@@ -3,6 +3,7 @@ namespace App\DAO;
 
 use PDO;
 use App\Entity\Report;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class ReportDAO
 {
@@ -23,6 +24,31 @@ class ReportDAO
 		$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 		$db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 		$this->db = $db;
+	}
+
+
+	/**
+	 * レポート情報登録
+	 *
+	 * @param Report $rp 登録対象のレポート情報
+	 */
+	public function insert(Report $rp): int
+	{
+		$sqlInsert = "INSERT INTO Reports (rp_date, rp_time_from, rp_time_to, rp_content, rp_created_at, reportcate_id, user_id) VALUES (:rp_date, :rp_time_from, :rp_time_to, :rp_content, NOW(), :reportcate_id, :user_id)";
+		$stmt = $this->db->prepare($sqlInsert);
+		$stmt->bindValue(":rp_date", $rp->getRpDate(), PDO::PARAM_STR);
+		$stmt->bindValue(":rp_time_from", $rp->getRpTimeFrom(), PDO::PARAM_STR);
+		$stmt->bindValue(":rp_time_to", $rp->getRpTimeTo(), PDO::PARAM_STR);
+		$stmt->bindValue(":rp_content", $rp->getRpContent(), PDO::PARAM_STR);
+		$stmt->bindValue(":reportcate_id", $rp->getReportCateId(), PDO::PARAM_INT);
+		$stmt->bindValue(":user_id", $rp->getUserId(), PDO::PARAM_INT);
+		$result = $stmt->execute();
+		if ($result) {
+			$id = $this->db->lastInsertId();
+		} else {
+			$id = -1;
+		}
+		return $id;
 	}
 
 
@@ -79,26 +105,17 @@ class ReportDAO
 
 
 	/**
-	 * レポート情報登録
+	 * レポート情報削除
 	 *
-	 * @param Report $rp 登録対象のレポート情報
+	 * @param int $id 削除対象のレポートID
+	 * @return bool $result 処理結果
 	 */
-	public function insert(Report $rp): int
+	public function delete(int $id): bool
 	{
-		$sqlInsert = "INSERT INTO Reports(rp_date, rp_time_from, rp_time_to, rp_content, rp_created_at, reportcate_id, user_id) VALUES (:rp_date, :rp_time_from, :rp_time_to, :rp_content, NOW(), :reportcate_id, :user_id)";
-		$stmt = $this->db->prepare($sqlInsert);
-		$stmt->bindValue(":rp_date", $rp->getRpDate(), PDO::PARAM_STR);
-		$stmt->bindValue(":rp_time_from", $rp->getRpTimeFrom(), PDO::PARAM_STR);
-		$stmt->bindValue(":rp_time_to", $rp->getRpTimeTo(), PDO::PARAM_STR);
-		$stmt->bindValue(":rp_content", $rp->getRpContent(), PDO::PARAM_STR);
-		$stmt->bindValue(":reportcate_id", $rp->getReportCateId(), PDO::PARAM_INT);
-		$stmt->bindValue(":user_id", $rp->getUserId(), PDO::PARAM_INT);
+		$sql = "DELETE FROM Reports WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
 		$result = $stmt->execute();
-		if ($result) {
-			$id = $this->db->lastInsertId();
-		} else {
-			$id = -1;
-		}
-		return $id;
+		return $result;
 	}
 }
