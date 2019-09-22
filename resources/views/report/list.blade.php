@@ -17,52 +17,50 @@
 		</ul>
 	</nav>
 
-	@if (session("flashMsg"))
-	<section id="flashMsg">
-		<p>{{ session("flashMsg") }}</p>
-	</section>
-	@endif
+	<div class="container">
+		@if (session("flashMsg"))
+		<section id="flashMsg">
+			<p>{{ session("flashMsg") }}</p>
+		</section>
+		@endif
 
-	<?php $cnt = 0; ?>
-	@foreach ($reportList as $report)
-		@if ($cnt > 2)
-			<?php $cnt = 0; ?>
-		@endif
-		@if ($cnt === 0)
-		<div class="card-deck">
-		@endif
-			<div class="card">
-				<h2 class="card-header">
-					<span>ID:{{ $report->getId() }}</span>
-				</h2>
-				<div class="card-body">
-					<h2 class="card-title">報告者ID:{{ $report->getUserId() }}</h2>
-				</div>
-				<ul class="list-group list-group-flush">
-					<li class="list-group-item">作業日:{{ $report->getRpDate() }}</li>
-					<li class="list-group-item">
-						作業種類:
-						<img src="../img/reportcate/1.jpg">
-						{{-- <img src="{{ asset('/img/reportcate/.jpg') }}" alt="Card image cap" class="float-right"> --}}
-					</li>
-				</ul>
-				<div class="card-body">
-					<a href="#" class="btn btn-primary">詳細</a>
-				</div>
-			</div>
-			<?php $cnt++; ?>
-			@if ($cnt % 3 === 0)
-			</div>
+		<?php $cnt = 0; ?>
+		@foreach ($reportList as $report)
+			@if ($cnt > 2)
+				<?php $cnt = 0; ?>
 			@endif
-		@endforeach
-	@if ($cnt < 2)
-		<div class="card"></div>
-	@endif
-	@if ($cnt < 3)
-		<div class="card"></div>
-		</div>
-	@endif
-
+			@if ($cnt === 0)
+			<div class="card-deck">
+			@endif
+				<div class="card">
+					<div class="card-header">
+						<h2 class="card-title">ID:{{ $report->getId() }}</h2>
+					</div>
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">報告者ID:{{ $report->getUserId() }}</li>
+						<li class="list-group-item">作業日:{{ $report->getRpDate() }}</li>
+						<li class="list-group-item">
+							作業種類:
+							<img src="../img/reportcate/{{ $report->getReportCateId() }}.jpg">
+						</li>
+					</ul>
+					<div class="card-body">
+						<a href="./detail/{{ $report->getId() }}" class="btn btn-primary">詳細</a>
+					</div>
+				</div>
+				<?php $cnt++; ?>
+				@if ($cnt % 3 === 0)
+				</div>
+				@endif
+			@endforeach
+		@if ($cnt < 2)
+			<div class="card"></div>
+		@endif
+		@if ($cnt < 3)
+			<div class="card"></div>
+			</div>
+		@endif
+	</div>
 
 	<script src="{{ asset('js/app.js') }}"></script>
 </body>
