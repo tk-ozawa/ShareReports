@@ -3,7 +3,6 @@ namespace App\DAO;
 
 use PDO;
 use App\Entity\Report;
-use phpDocumentor\Reflection\Types\Boolean;
 
 class ReportDAO
 {
@@ -101,6 +100,28 @@ class ReportDAO
 			$rp->setUserId($row['user_id']);
 		}
 		return $rp;
+	}
+
+
+	/**
+	 * レポート情報更新
+	 *
+	 * @param Report $rp 更新対象のレポート情報
+	 * @return bool $result 処理結果
+	 */
+	public function update(Report $rp): bool
+	{
+		$sqlUpdate = "UPDATE Reports SET rp_date = :rp_date, rp_time_from = :rp_time_from, rp_time_to = :rp_time_to, rp_content = :rp_content, reportcate_id = :reportcate_id, user_id = :user_id WHERE id = :id";
+		$stmt = $this->db->prepare($sqlUpdate);
+		$stmt->bindValue(":id", $rp->getId(), PDO::PARAM_INT);
+		$stmt->bindValue(":rp_date", $rp->getRpDate(), PDO::PARAM_STR);
+		$stmt->bindValue(":rp_time_from", $rp->getRpTimeFrom(), PDO::PARAM_STR);
+		$stmt->bindValue(":rp_time_to", $rp->getRpTimeTo(), PDO::PARAM_STR);
+		$stmt->bindValue(":rp_content", $rp->getRpContent(), PDO::PARAM_STR);
+		$stmt->bindValue(":reportcate_id", $rp->getReportCateId(), PDO::PARAM_INT);
+		$stmt->bindValue(":user_id", $rp->getUserId(), PDO::PARAM_INT);
+		$result = $stmt->execute();
+		return $result;
 	}
 
 
