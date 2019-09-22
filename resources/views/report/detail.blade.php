@@ -5,21 +5,29 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" />
+	<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<title>レポート詳細画面 / ID:{{ $report->getId() }}</title>
 </head>
 <body>
 	<nav class="navbar navbar-light bg-light">
-		<a href="../showList"><h1>レポート管理システム</h1></a>
-		<ul class="navbar-nav ml-auto">
-			<li class="nav-item"><a class="btn btn-primary" href="/sharereports/public/reports/goAdd" role="button">新規作成</a></li>
-			<li class="nav-item"><a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a></li>
+		<a href="/sharereports/public/reports/showList"><h1>レポート管理システム</h1></a>
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item">
+				<a class="btn btn-primary" href="/sharereports/public/reports/goAdd" role="button">新規作成</a>
+			</li>
 		</ul>
+		<div class="ml-auto">
+			<span>ログイン中:{{ session('usName') }}様</span>
+			<a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a>
+		</div>
 	</nav>
 
 	<nav aria-label="パンくずリスト">
 		<ol class="breadcrumb">
-		<li class="breadcrumb-item"><a href="../showList">レポートリスト</a></li>
+			<li class="breadcrumb-item"><a href="/sharereports/public/reports/showList">レポートリスト</a></li>
 			<li class="breadcrumb-item active" aria-current="page">レポート詳細</li>
 		</ol>
 	</nav>
