@@ -27,6 +27,30 @@ class UserDAO
 
 
 	/**
+	 * 全ユーザー情報検索
+	 *
+	 * @return array $usList 全ユーザー情報
+	 */
+	public function findAll(): array
+	{
+		$sqlSelect = "SELECT * FROM Users";
+		$stmt = $this->db->prepare($sqlSelect);
+		$stmt->execute();
+		$usList = [];
+		while ($row = $stmt->fetch()) {
+			$us = new User();
+			$us->setId($row['id']);
+			$us->setUsMail($row['us_mail']);
+			$us->setUsName($row['us_name']);
+			$us->setUsPassword($row['us_password']);
+			$us->setUsAuth($row['us_auth']);
+			$usList[] = $us;
+		}
+		return $usList;
+	}
+
+
+	/**
 	 * メールアドレスによるユーザー情報の検索
 	 *
 	 * @param string $usMail 検索するメールアドレス
