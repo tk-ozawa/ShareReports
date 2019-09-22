@@ -29,24 +29,24 @@ class ReportcateDAO
 	/**
 	 * 全作業種類情報検索
 	 *
-	 * @return array $reportcateList 全作業種類情報
+	 * @return array $rcList 全作業種類情報
 	 */
 	public function findAll(): array
 	{
 		$sqlSelect = "SELECT * FROM Reportcates";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->execute();
-		$reportcateList = [];
+		$rcList = [];
 		while ($row = $stmt->fetch()) {
-			$rpcate = new Reportcate();
-			$rpcate->setId($row['id']);
-			$rpcate->setRcName($row['rc_name']);
-			$rpcate->setRcNote($row['rc_note']);
-			$rpcate->setRcListFlg($row['rc_list_flg']);
-			$rpcate->setRcOrder($row['rc_order']);
-			$reportcateList[] = $rpcate;
+			$rc = new Reportcate();
+			$rc->setId($row['id']);
+			$rc->setRcName($row['rc_name']);
+			$rc->setRcNote($row['rc_note']);
+			$rc->setRcListFlg($row['rc_list_flg']);
+			$rc->setRcOrder($row['rc_order']);
+			$rcList[] = $rc;
 		}
-		return $reportcateList;
+		return $rcList;
 	}
 
 
@@ -62,15 +62,15 @@ class ReportcateDAO
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
 		$result = $stmt->execute();
-		$rpcate = null;
+		$rc = null;
 		if ($result && $row = $stmt->fetch()) {
-			$rpcate = new Reportcate();
-			$rpcate->setId($row['id']);
-			$rpcate->setRcName($row['rc_name']);
-			$rpcate->setRcNote($row['rc_note']);
-			$rpcate->setRcListFlg($row['rc_list_flg']);
-			$rpcate->setRcOrder($row['rc_order']);
+			$rc = new Reportcate();
+			$rc->setId($row['id']);
+			$rc->setRcName($row['rc_name']);
+			$rc->setRcNote($row['rc_note']);
+			$rc->setRcListFlg($row['rc_list_flg']);
+			$rc->setRcOrder($row['rc_order']);
 		}
-		return $rpcate;
+		return $rc;
 	}
 }
