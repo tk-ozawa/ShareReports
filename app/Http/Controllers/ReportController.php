@@ -84,7 +84,7 @@ class ReportController extends Controller
 			$rp->setRpTimeFrom($request->input('rpTimeFrom').':00');
 			$rp->setRpTimeTo($request->input('rpTimeTo').':00');
 			$rp->setReportCateId((int)$request->input('reportCateId'));
-			$rp->setRpContent(nl2br($request->input('rpContent')));
+			$rp->setRpContent($request->input('rpContent'));
 			$rp->setUserId($request->session()->get('usId'));
 
 			// サーバ側バリデーション処理
@@ -112,7 +112,7 @@ class ReportController extends Controller
 			}
 		}
 		if ($isRedirect) {
-			$response = redirect("./reports/list")->with("flashMsg", "レポートID:".$rpId."でレポート情報を登録しました。");
+			$response = redirect("./reports/showList")->with("flashMsg", "レポートID:".$rpId."でレポート情報を登録しました。");
 		}
 		else {
 			$response = view($templatePath, $assign);

@@ -58,7 +58,7 @@ class LoginController extends Controller
 
 		if ($isRedirect) {
 			// ログイン成功
-			$response = redirect("/reports/list");
+			$response = redirect("/reports/showList");
 		}
 		else {
 			// ログイン失敗
