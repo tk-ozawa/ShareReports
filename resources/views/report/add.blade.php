@@ -13,8 +13,11 @@
 </head>
 <body>
 	<nav class="navbar navbar-light bg-light">
-		<a href="./showList"><h1>レポート管理システム</h1></a>
-		<li class="nav-item"><a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a></li>
+		<a href="/sharereports/public/reports/showList"><h1>レポート管理システム</h1></a>
+		<div class="ml-auto">
+			<span>ログイン中:{{ session('usName') }}様</span>
+			<a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a>
+		</div>
 	</nav>
 
 	@isset($validationMsgs)
@@ -29,7 +32,7 @@
 	@endisset
 
 	<div class="container">
-		<form action="./add" method="post">
+		<form action="/sharereports/public/reports/add" method="post">
 			@csrf
 			<div class="form-group">
 				<div class="row">
