@@ -28,23 +28,49 @@ class ReportcateDAO
 
 	/**
 	 * 全作業種類情報検索
+	 *
+	 * @return array $reportcateList 全作業種類情報
 	 */
 	public function findAll(): array
 	{
-		$sqlSelect = "SELECT * FROM reportcates";
+		$sqlSelect = "SELECT * FROM Reportcates";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->execute();
 		$reportcateList = [];
 		while ($row = $stmt->fetch()) {
-			$reportcate = new Reportcate();
-			$reportcate->setId($row['id']);
-			$reportcate->setRcName($row['rc_name']);
-			$reportcate->setRcNote($row['rc_note']);
-			$reportcate->setRcListFlg($row['rc_list_flg']);
-			$reportcate->setRcOrder($row['rc_order']);
-
-			$reportcateList[] = $reportcate;
+			$rpcate = new Reportcate();
+			$rpcate->setId($row['id']);
+			$rpcate->setRcName($row['rc_name']);
+			$rpcate->setRcNote($row['rc_note']);
+			$rpcate->setRcListFlg($row['rc_list_flg']);
+			$rpcate->setRcOrder($row['rc_order']);
+			$reportcateList[] = $rpcate;
 		}
 		return $reportcateList;
+	}
+
+
+	/**
+	 * IDによる作業種類情報の検索
+	 *
+	 * @param int $id 検索する作業種類ID
+	 * @param Reportcate $rp 作業種類情報
+	 */
+	public function findById(int $id): Reportcate
+	{
+		$sqlSelect = "SELECT * FROM Reportcates WHERE id = :id";
+		$stmt = $this->db->prepare($sqlSelect);
+		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
+		$result = $stmt->execute();
+		$rpcate = null;
+		if ($result && $row = $stmt->fetch()) {
+			$rpcate = new Reportcate();
+			$rpcate->setId($row['id']);
+			$rpcate->setRcName($row['rc_name']);
+			$rpcate->setRcNote($row['rc_note']);
+			$rpcate->setRcListFlg($row['rc_list_flg']);
+			$rpcate->setRcOrder($row['rc_order']);
+		}
+		return $rpcate;
 	}
 }

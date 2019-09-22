@@ -27,26 +27,51 @@ class UserDAO
 
 
 	/**
-	 * ユーザーのメールアドレスによる検索
+	 * メールアドレスによるユーザー情報の検索
 	 *
-	 * @param string $usMail メールアドレス
-	 * @return User 該当するUserオブジェクト。ただし該当データが無い場合はnull
+	 * @param string $usMail 検索するメールアドレス
+	 * @return User $us 該当するUserオブジェクト。ただし該当データが無い場合はnull
 	 */
 	public function findByUsMail(string $usMail): ?User
 	{
-		$sqlSelect = "SELECT * FROM users WHERE us_mail = :us_mail";
+		$sqlSelect = "SELECT * FROM Users WHERE us_mail = :us_mail";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->bindValue(":us_mail", $usMail, PDO::PARAM_STR);
 		$result = $stmt->execute();
-		$user = null;
+		$us = null;
 		if ($result && $row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$user = new User();
-			$user->setId($row['id']);
-			$user->setUsMail($row['us_mail']);
-			$user->setUsName($row['us_name']);
-			$user->setUsPassword($row['us_password']);
-			$user->setUsAuth($row['us_auth']);
+			$us = new User();
+			$us->setId($row['id']);
+			$us->setUsMail($row['us_mail']);
+			$us->setUsName($row['us_name']);
+			$us->setUsPassword($row['us_password']);
+			$us->setUsAuth($row['us_auth']);
 		}
-		return $user;
+		return $us;
+	}
+
+
+	/**
+	 * IDによるユーザー情報の検索
+	 *
+	 * @param int $id 検索するユーザーID
+	 * @return User $us ユーザー情報
+	 */
+	public function findById(int $id): User
+	{
+		$sqlSelect = "SELECT * FROM Users WHERE id = :id";
+		$stmt = $this->db->prepare($sqlSelect);
+		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
+		$result = $stmt->execute();
+		$us = null;
+		if ($result && $row = $stmt->fetch()) {
+			$us = new User();
+			$us->setId($row['id']);
+			$us->setUsMail($row['us_mail']);
+			$us->setUsName($row['us_name']);
+			$us->setUsPassword($row['us_password']);
+			$us->setUsAuth($row['us_auth']);
+		}
+		return $us;
 	}
 }

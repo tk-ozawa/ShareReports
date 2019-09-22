@@ -31,7 +31,7 @@ class ReportDAO
 	 */
 	public function findAll(): array
 	{
-		$sqlSelect = "SELECT * FROM reports ORDER BY rp_date";
+		$sqlSelect = "SELECT * FROM Reports ORDER BY rp_date";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->execute();
 		$rpList = [];
@@ -45,10 +45,36 @@ class ReportDAO
 			$rp->setRpCreatedAt($row['rp_created_at']);
 			$rp->setReportCateId($row['reportcate_id']);
 			$rp->setUserId($row['user_id']);
-
 			$rpList[] = $rp;
 		}
 		return $rpList;
+	}
+
+
+	/**
+	 * レポートIDによるレポート情報検索
+	 *
+	 * @param int $id 検索するレポートID
+	 */
+	public function findByRpId(int $id): Report
+	{
+		$sqlSelect = "SELECT * FROM Reports WHERE id = :id";
+		$stmt = $this->db->prepare($sqlSelect);
+		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
+		$result = $stmt->execute();
+		$rp = null;
+		if ($result && $row = $stmt->fetch()) {
+			$rp = new Report();
+			$rp->setId($row['id']);
+			$rp->setRpDate($row['rp_date']);
+			$rp->setRpTimeFrom($row['rp_time_from']);
+			$rp->setRpTimeTo($row['rp_time_to']);
+			$rp->setRpContent($row['rp_content']);
+			$rp->setRpCreatedAt($row['rp_created_at']);
+			$rp->setReportCateId($row['reportcate_id']);
+			$rp->setUserId($row['user_id']);
+		}
+		return $rp;
 	}
 
 
@@ -59,7 +85,7 @@ class ReportDAO
 	 */
 	public function insert(Report $rp): int
 	{
-		$sqlInsert = "INSERT INTO reports(rp_date, rp_time_from, rp_time_to, rp_content, rp_created_at, reportcate_id, user_id) VALUES (:rp_date, :rp_time_from, :rp_time_to, :rp_content, NOW(), :reportcate_id, :user_id)";
+		$sqlInsert = "INSERT INTO Reports(rp_date, rp_time_from, rp_time_to, rp_content, rp_created_at, reportcate_id, user_id) VALUES (:rp_date, :rp_time_from, :rp_time_to, :rp_content, NOW(), :reportcate_id, :user_id)";
 		$stmt = $this->db->prepare($sqlInsert);
 		$stmt->bindValue(":rp_date", $rp->getRpDate(), PDO::PARAM_STR);
 		$stmt->bindValue(":rp_time_from", $rp->getRpTimeFrom(), PDO::PARAM_STR);
@@ -69,10 +95,10 @@ class ReportDAO
 		$stmt->bindValue(":user_id", $rp->getUserId(), PDO::PARAM_INT);
 		$result = $stmt->execute();
 		if ($result) {
-			$rpId = $this->db->lastInsertId();
+			$id = $this->db->lastInsertId();
 		} else {
-			$rpId = -1;
+			$id = -1;
 		}
-		return $rpId;
+		return $id;
 	}
 }
