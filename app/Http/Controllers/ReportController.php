@@ -9,6 +9,7 @@ use App\Functions;
 use App\Entity\Report;
 use App\DAO\ReportDAO;
 use App\DAO\ReportcateDAO;
+use App\DAO\UserDAO;
 
 /**
  * レポート管理に関するコントローラクラス
@@ -111,7 +112,7 @@ class ReportController extends Controller
 			}
 		}
 		if ($isRedirect) {
-			$response = redirect("./reports/showList")->with("flashMsg", "レポートID:".$rpId."でレポート情報を登録しました。");
+			$response = redirect("./reports/list")->with("flashMsg", "レポートID:".$rpId."でレポート情報を登録しました。");
 		}
 		else {
 			$response = view($templatePath, $assign);
@@ -122,10 +123,37 @@ class ReportController extends Controller
 	/**
 	 * レポート詳細画面表示処理
 	 */
-	public function showDetail(Request $request)
+	public function showDetail(int $rpId, Request $request)
 	{
 		$templatePath = "report/detail";
 		$assign = [];
-		$request->input('rp');
+
+		if (Functions::loginCheck($request)) {
+			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
+			$assign["validationMsgs"] = $validationMsgs;
+			$templatePath = "login";
+		}
+		else {
+			$db = DB::connection()->getPdo();
+			$reportDAO = new ReportDAO($db);
+
+			// レポート情報
+			$rp = $reportDAO->findByRpId($rpId);
+			$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));
+			$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));
+
+			// 作業種類情報
+			$reportcateDAO = new ReportcateDAO($db);
+			$rpcate = $reportcateDAO->findById($rp->getReportCateId());
+
+			// 投稿ユーザー情報
+			$userDAO = new UserDAO($db);
+			$us = $userDAO->findById($rp->getUserId());
+
+			$assign['report'] = $rp;
+			$assign['reportcate'] = $rpcate;
+			$assign['user'] = $us;
+		}
+		return view($templatePath, $assign);
 	}
 }
