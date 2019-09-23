@@ -28,7 +28,7 @@
 		@csrf
 		<div class="form-group">
 			<label for="loginUsMail">ID</label>
-			<input type="text" id="loginUsMail" class="form-control" name="loginUsMail" value="architshin@websarva.com" required>
+			<input type="text" id="loginUsMail" class="form-control" name="loginUsMail" value="test@test.com" required>
 		</div>
 		<div class="form-group">
 			<label for="loginUsPasswd">パスワード</label>
