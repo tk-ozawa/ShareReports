@@ -33,7 +33,7 @@ class ReportcateDAO
 	 */
 	public function findAll(): array
 	{
-		$sqlSelect = "SELECT * FROM Reportcates";
+		$sqlSelect = "SELECT * FROM reportcates";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->execute();
 		$rcList = [];
@@ -58,7 +58,7 @@ class ReportcateDAO
 	 */
 	public function findById(int $id): Reportcate
 	{
-		$sqlSelect = "SELECT * FROM Reportcates WHERE id = :id";
+		$sqlSelect = "SELECT * FROM reportcates WHERE id = :id";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
 		$result = $stmt->execute();

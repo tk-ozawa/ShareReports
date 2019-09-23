@@ -33,7 +33,7 @@ class UserDAO
 	 */
 	public function findAll(): array
 	{
-		$sqlSelect = "SELECT * FROM Users";
+		$sqlSelect = "SELECT * FROM users";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->execute();
 		$usList = [];
@@ -58,7 +58,7 @@ class UserDAO
 	 */
 	public function findByUsMail(string $usMail): ?User
 	{
-		$sqlSelect = "SELECT * FROM Users WHERE us_mail = :us_mail";
+		$sqlSelect = "SELECT * FROM users WHERE us_mail = :us_mail";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->bindValue(":us_mail", $usMail, PDO::PARAM_STR);
 		$result = $stmt->execute();
@@ -83,7 +83,7 @@ class UserDAO
 	 */
 	public function findById(int $id): User
 	{
-		$sqlSelect = "SELECT * FROM Users WHERE id = :id";
+		$sqlSelect = "SELECT * FROM users WHERE id = :id";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
 		$result = $stmt->execute();

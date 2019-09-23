@@ -33,7 +33,7 @@ class ReportDAO
 	 */
 	public function insert(Report $rp): int
 	{
-		$sqlInsert = "INSERT INTO Reports (rp_date, rp_time_from, rp_time_to, rp_content, rp_created_at, reportcate_id, user_id) VALUES (:rp_date, :rp_time_from, :rp_time_to, :rp_content, NOW(), :reportcate_id, :user_id)";
+		$sqlInsert = "INSERT INTO reports (rp_date, rp_time_from, rp_time_to, rp_content, rp_created_at, reportcate_id, user_id) VALUES (:rp_date, :rp_time_from, :rp_time_to, :rp_content, NOW(), :reportcate_id, :user_id)";
 		$stmt = $this->db->prepare($sqlInsert);
 		$stmt->bindValue(":rp_date", $rp->getRpDate(), PDO::PARAM_STR);
 		$stmt->bindValue(":rp_time_from", $rp->getRpTimeFrom(), PDO::PARAM_STR);
@@ -56,7 +56,7 @@ class ReportDAO
 	 */
 	public function findAll(): array
 	{
-		$sqlSelect = "SELECT * FROM Reports ORDER BY rp_date";
+		$sqlSelect = "SELECT * FROM reports ORDER BY rp_date";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->execute();
 		$rpList = [];
@@ -83,7 +83,7 @@ class ReportDAO
 	 */
 	public function findByRpId(int $id): Report
 	{
-		$sqlSelect = "SELECT * FROM Reports WHERE id = :id";
+		$sqlSelect = "SELECT * FROM reports WHERE id = :id";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
 		$result = $stmt->execute();
@@ -111,7 +111,7 @@ class ReportDAO
 	 */
 	public function update(Report $rp): bool
 	{
-		$sqlUpdate = "UPDATE Reports SET rp_date = :rp_date, rp_time_from = :rp_time_from, rp_time_to = :rp_time_to, rp_content = :rp_content, reportcate_id = :reportcate_id, user_id = :user_id WHERE id = :id";
+		$sqlUpdate = "UPDATE reports SET rp_date = :rp_date, rp_time_from = :rp_time_from, rp_time_to = :rp_time_to, rp_content = :rp_content, reportcate_id = :reportcate_id, user_id = :user_id WHERE id = :id";
 		$stmt = $this->db->prepare($sqlUpdate);
 		$stmt->bindValue(":id", $rp->getId(), PDO::PARAM_INT);
 		$stmt->bindValue(":rp_date", $rp->getRpDate(), PDO::PARAM_STR);
@@ -133,7 +133,7 @@ class ReportDAO
 	 */
 	public function delete(int $id): bool
 	{
-		$sql = "DELETE FROM Reports WHERE id = :id";
+		$sql = "DELETE FROM reports WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
 		$result = $stmt->execute();
