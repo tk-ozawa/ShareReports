@@ -103,7 +103,7 @@ class ReportController extends Controller
 			$rpList = [];
 			if ($usId === 'all' && $rcId === 'all') {
 				// 全ユーザー & 全作業種類
-				$rpList = $reportDAO->findAll($case, $orderBy);
+				return redirect("./reports/showList");
 			} else if ($usId === 'all' && $rcId !== 'all') {
 				// 作業種類指定
 				$rpList = $reportDAO->findByRcId((int)$rcId, $case, $orderBy);
