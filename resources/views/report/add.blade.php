@@ -14,6 +14,27 @@
 <body>
 	<nav class="navbar navbar-light bg-light">
 		<a href="/sharereports/public/reports/showList"><h1>レポート管理システム</h1></a>
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item">
+				<a class="btn btn-primary" href="/sharereports/public/reports/goAdd" role="button">新規作成</a>
+			</li>
+		</ul>
+		<ul class="navbar-nav mr-auto">
+			<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/searchList" method="GET">
+				<li class="nav-item">
+					レポート絞り込み:
+					<select class="form-control mr-sm-2" name="usId" required>
+						<option id="" value="" disabled selected>選択…</option>
+						@foreach ($userList as $us)
+							<option id="" value="{{ $us->getId() }}">{{ $us->getId() }}:{{ $us->getUsName() }}</option>
+						@endforeach
+					</select>
+				</li>
+				<li class="nav-item">
+					<button type="submit" class="btn btn-outline-success my-2 my-sm-0">検索</button>
+				</li>
+			</form>
+		</ul>
 		<div class="ml-auto">
 			<span>ログイン中:{{ session('usName') }}様</span>
 			<a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a>
