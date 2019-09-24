@@ -11,6 +11,7 @@ Route::get("/logout", "LoginController@logout");	// ログアウト処理
  * レポート管理
  */
 Route::get("/reports/showList", "ReportController@showList");	// レポートリスト表示処理
+Route::get("/reports/searchList", "ReportController@searchList");	// レポート検索結果表示処理
 
 Route::get("/reports/goAdd", "ReportController@goAdd");	// レポート登録画面表示処理
 Route::post("/reports/add", "ReportController@add");	// レポート登録処理
