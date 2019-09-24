@@ -22,13 +22,29 @@
 		<ul class="navbar-nav mr-auto">
 			<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/searchList" method="GET">
 				<li class="nav-item">
-					レポート絞り込み:
-					<select class="form-control mr-sm-2" id="usId" name="usId" required>
-						<option id="" value="" disabled selected>選択…</option>
+					絞り込み:
+				</li>
+				<li class="nav-item">
+					<select class="form-control mr-sm-2" name="usId" required>
+						<option id="" value="all" selected>全員</option>
 						@foreach ($userList as $us)
-							<option id="" value="{{ $us->getId() }}">{{ $us->getId() }}:{{ $us->getUsName() }}</option>
+							<option id="" value="{{ $us->getId() }}" @if($user->getId() == $us->getId()) selected @endif>{{ $us->getId() }}:{{ $us->getUsName() }}</option>
 						@endforeach
 					</select>
+				</li>
+				<li class="nav-item">
+					の
+				</li>
+				<li class="nav-item">
+					<select class="form-control mr-sm-2" name="rcId" required>
+						<option id="" value="all" selected>全作業種類</option>
+						@foreach ($reportCateList as $rpCate)
+							<option id="" value="{{ $rpCate->getId() }}" @if($rcId == $rpCate->getId()) selected @endif>{{ $rpCate->getId() }}:{{ $rpCate->getRcName() }}</option>
+						@endforeach
+					</select>
+				</li>
+				<li class="nav-item">
+					を対象で
 				</li>
 				<li class="nav-item">
 					<button type="submit" class="btn btn-outline-success my-2 my-sm-0">検索</button>
@@ -52,7 +68,29 @@
 		@empty($reportList)
 		<h2>レポートがありません。</h2>
 		@else
+			<form action="/sharereports/public/reports/searchList" method="get">
+				@if(!empty($user))
+					<input type="hidden" name="usId" value="{{ $user->getId() }}">
+				@endif
+				@if(!empty($rcId))
+					<input type="hidden" name="rcId" value="{{ $rcId }}">
+				@endif
+				<select name="case" id="">
+					<option value="id" selected>レポートID</option>
+					<option value="rp_date" @if($case === "rp_date") selected @endif>作業日</option>
+					<option value="rp_created_at" @if($case === "rp_created_at") selected @endif>レポート登録日時</option>
+				</select>
+				<span>の</span>
+				<select name="orderBy" id="" required>
+					<option value="ASC" selected>昇順</option>
+					<option value="DESC" @if($orderBy === "DESC") selected @endif>降順</option>
+				</select>
+				<span>で</span>
+				<button type="submit" class="btn btn-outline-success">並び替え</button>
+			</form>
+			@if(!empty($user))
 			<h2>"ユーザー名: {{ $user->getUsName() }}"さんの投稿レポート検索結果</h2>
+			@endif
 			<?php $cnt = 0; ?>
 			@foreach ($reportList as $report)
 				@if ($cnt > 2)
@@ -90,8 +128,6 @@
 				</div>
 			@endif
 		@endif
-
-
 	</div>
 
 	<script src="{{ asset('js/app.js') }}"></script>

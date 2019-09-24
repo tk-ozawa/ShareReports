@@ -32,12 +32,20 @@ class ReportController extends Controller
 		else {
 			$db = DB::connection()->getPdo();
 			$reportDAO = new ReportDAO($db);
-			$case = "";
-			$orderBy = "";
+			$case = 'id';
+			if (!empty($request->input('case'))) {
+				// カラムの指定があった時…
+				$case = $request->input('case');
+			}
+			$orderBy = true;
+			if (!empty($request->input('orderBy'))) {
+				// 並び順に指定があった時…
+				$orderBy = false;
+			}
 			// reportsテーブルの全情報を取得
 			if (!empty($request->input('case'))) {
 				// 並び替えオプション有
-				$reportList = $reportDAO->findAllOrderByCase($request->input('case'), $request->input('orderBy'));
+				$reportList = $reportDAO->findAll($case, $orderBy);
 				$case = $request->input('case');
 				$orderBy = $request->input('orderBy');
 			}
@@ -50,9 +58,11 @@ class ReportController extends Controller
 				$request->session()->put('flash', 'レポートが登録されていません。');
 			}
 			$assign["reportList"] = $reportList;
-			// ナビゲーションバーの検索欄用(ユーザー一覧プルダウンメニュー)
+			// ナビゲーションバーの検索欄用
 			$userDAO = new UserDAO($db);
 			$assign["userList"] = $userDAO->findAll();
+			$reportcateDAO = new ReportcateDAO($db);
+			$assign["reportCateList"] = $reportcateDAO->findAll();
 		}
 		return view($templatePath, $assign);
 	}
@@ -62,7 +72,7 @@ class ReportController extends Controller
 	 */
 	public function searchList(Request $request)
 	{
-		$templatePath = "report/searchResult";
+		$templatePath = "report/resultList";
 		$assign = [];
 		$validationMsgs = [];
 		if (Functions::loginCheck($request)) {
@@ -71,21 +81,54 @@ class ReportController extends Controller
 			$templatePath = "login";
 		}
 		else {
-			// 該当ユーザーが登録した全レポートを取得
 			$db = DB::connection()->getPdo();
 			$reportDAO = new ReportDAO($db);
-			$reportList = $reportDAO->findByUsId((int)$request->input('usId'));
-			if (empty($reportList)) {
-				$request->session()->put('flash', 'レポートを投稿していません。');
+			// 並び替え
+			$case = 'id';
+			if (!empty($request->input('case'))) {
+				// カラムの指定があった時…
+				$case = $request->input('case');
 			}
-			$assign["reportList"] = $reportList;
-			// 該当ユーザーのユーザー情報
-			$userDAO = new UserDAO($db);
-			$user = $userDAO->findById((int)$request->input('usId'));
-			$assign["user"] = $user;
-			// ナビゲーションバーの検索欄用(ユーザー一覧プルダウンメニュー)
+			$assign["case"] = $case;
+			$orderBy = true;
+			if (!empty($request->input('orderBy'))) {
+				// 並び順に指定があった時…
+				$orderBy = false;
+			}
+			$assign["orderBy"] = $orderBy;
+
+			// 絞り込み
+			$usId = $request->input('usId');
+			$rcId = $request->input('rcId');
+			$rpList = [];
+			if ($usId === 'all' && $rcId === 'all') {
+				// 全ユーザー & 全作業種類
+				$rpList = $reportDAO->findAll($case, $orderBy);
+			} else if ($usId === 'all' && $rcId !== 'all') {
+				// 作業種類指定
+				$rpList = $reportDAO->findByRcId((int)$rcId, $case, $orderBy);
+			} else if ($usId !== 'all' && $rcId === 'all') {
+				// ユーザー指定
+				$rpList = $reportDAO->findByUsId((int)$usId, $case, $orderBy);
+			} else {
+				// ユーザー指定 & 作業種類指定
+				$rpList = $reportDAO->findByUsIdAndRcId((int)$usId, (int)$rcId, $case, $orderBy);
+			}
+
+			$assign["reportList"] = $rpList;
+
+			if ($usId !== 'all') {
+				// 該当ユーザーのユーザー情報
+				$userDAO = new UserDAO($db);
+				$user = $userDAO->findById((int)$usId);
+				$assign["user"] = $user;
+			}
+			$assign["rcId"] = $rcId;
+			// ナビゲーションバーの検索欄用
 			$userDAO = new UserDAO($db);
 			$assign["userList"] = $userDAO->findAll();
+			$reportcateDAO = new ReportcateDAO($db);
+			$assign["reportCateList"] = $reportcateDAO->findAll();
 		}
 		return view($templatePath, $assign);
 	}
