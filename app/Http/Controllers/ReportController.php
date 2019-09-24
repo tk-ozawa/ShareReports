@@ -30,14 +30,62 @@ class ReportController extends Controller
 			$templatePath = "login";
 		}
 		else {
-			// reportsテーブルの全情報を取得
 			$db = DB::connection()->getPdo();
 			$reportDAO = new ReportDAO($db);
-			$reportList = $reportDAO->findAll();
+			$case = "";
+			$orderBy = "";
+			// reportsテーブルの全情報を取得
+			if (!empty($request->input('case'))) {
+				// 並び替えオプション有
+				$reportList = $reportDAO->findAllOrderByCase($request->input('case'), $request->input('orderBy'));
+				$case = $request->input('case');
+				$orderBy = $request->input('orderBy');
+			}
+			else {
+				$reportList = $reportDAO->findAll();
+			}
+			$assign["case"] = $case;
+			$assign["orderBy"] = $orderBy;
 			if (empty($reportList)) {
 				$request->session()->put('flash', 'レポートが登録されていません。');
 			}
 			$assign["reportList"] = $reportList;
+			// ナビゲーションバーの検索欄用(ユーザー一覧プルダウンメニュー)
+			$userDAO = new UserDAO($db);
+			$assign["userList"] = $userDAO->findAll();
+		}
+		return view($templatePath, $assign);
+	}
+
+	/**
+	 * レポート検索結果表示処理
+	 */
+	public function searchList(Request $request)
+	{
+		$templatePath = "report/searchResult";
+		$assign = [];
+		$validationMsgs = [];
+		if (Functions::loginCheck($request)) {
+			$validationMsgs[] = "ログインしていないか、前回ログインしてから一定時間が経過しています。もう一度ログインしなおしてください。";
+			$assign["validationMsgs"] = $validationMsgs;
+			$templatePath = "login";
+		}
+		else {
+			// 該当ユーザーが登録した全レポートを取得
+			$db = DB::connection()->getPdo();
+			$reportDAO = new ReportDAO($db);
+			$reportList = $reportDAO->findByUsId((int)$request->input('usId'));
+			if (empty($reportList)) {
+				$request->session()->put('flash', 'レポートを投稿していません。');
+			}
+			$assign["reportList"] = $reportList;
+			// 該当ユーザーのユーザー情報
+			$userDAO = new UserDAO($db);
+			$user = $userDAO->findById((int)$request->input('usId'));
+			$assign["user"] = $user;
+			// ナビゲーションバーの検索欄用(ユーザー一覧プルダウンメニュー)
+			$userDAO = new UserDAO($db);
+			$assign["userList"] = $userDAO->findAll();
 		}
 		return view($templatePath, $assign);
 	}
@@ -60,6 +108,9 @@ class ReportController extends Controller
 			$db = DB::connection()->getPdo();
 			$reportcateDAO = new ReportcateDAO($db);
 			$assign['reportcateList'] = $reportcateDAO->findAll();
+			// ナビゲーションバーの検索欄用(ユーザー一覧プルダウンメニュー)
+			$userDAO = new UserDAO($db);
+			$assign["userList"] = $userDAO->findAll();
 		}
 		return view($templatePath, $assign);
 	}
@@ -107,6 +158,9 @@ class ReportController extends Controller
 				$reportcateDAO = new ReportcateDAO($db);
 				$assign['reportcateList'] = $reportcateDAO->findAll();
 				$assign['validationMsgs'] = $validationMsgs;
+				// ナビゲーションバーの検索欄用(ユーザー一覧プルダウンメニュー)
+				$userDAO = new UserDAO($db);
+				$assign["userList"] = $userDAO->findAll();
 			}
 		}
 		if ($isRedirect) {
@@ -137,16 +191,18 @@ class ReportController extends Controller
 			$rp = $reportDAO->findByRpId($rpId);
 			$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));	// HTML上の時刻の形式(HH:MM)に合わせる
 			$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));		// HTML上の時刻の形式(HH:MM)に合わせる
+			$assign['report'] = $rp;
 			// 作業種類情報
 			$reportcateDAO = new ReportcateDAO($db);
 			$rpcate = $reportcateDAO->findById($rp->getReportCateId());
+			$assign['reportcate'] = $rpcate;
 			// 投稿ユーザー情報
 			$userDAO = new UserDAO($db);
 			$us = $userDAO->findById($rp->getUserId());
-
-			$assign['report'] = $rp;
-			$assign['reportcate'] = $rpcate;
 			$assign['user'] = $us;
+			// ナビゲーションバーの検索欄用(ユーザー一覧プルダウンメニュー)
+			$userDAO = new UserDAO($db);
+			$assign["userList"] = $userDAO->findAll();
 		}
 		return view($templatePath, $assign);
 	}
@@ -179,6 +235,9 @@ class ReportController extends Controller
 				$rcList = $reportcateDAO->findAll();
 				$assign["report"] = $rp;
 				$assign["reportcateList"] = $rcList;
+				// ナビゲーションバーの検索欄用(ユーザー一覧プルダウンメニュー)
+				$userDAO = new UserDAO($db);
+				$assign["userList"] = $userDAO->findAll();
 			}
 		}
 		return view($templatePath, $assign);
@@ -233,6 +292,9 @@ class ReportController extends Controller
 				$assign["report"] = $rp;
 				$assign["reportcateList"] = $rcList;
 				$assign["validationMsgs"] = $validationMsgs;
+				// ナビゲーションバーの検索欄用(ユーザー一覧プルダウンメニュー)
+				$userDAO = new UserDAO($db);
+				$assign["userList"] = $userDAO->findAll();
 			}
 		}
 		if ($isRedirect) {
@@ -263,15 +325,18 @@ class ReportController extends Controller
 			$rp = $reportDAO->findByRpId($rpId);
 			$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));
 			$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));
+			$assign['report'] = $rp;
 			// 作業種類情報
 			$reportcateDAO = new ReportcateDAO($db);
 			$rpcate = $reportcateDAO->findById($rp->getReportCateId());
+			$assign['reportcate'] = $rpcate;
 			// 投稿ユーザー情報
 			$userDAO = new UserDAO($db);
 			$us = $userDAO->findById($rp->getUserId());
-			$assign['report'] = $rp;
-			$assign['reportcate'] = $rpcate;
 			$assign['user'] = $us;
+			// ナビゲーションバーの検索欄用(ユーザー一覧プルダウンメニュー)
+			$userDAO = new UserDAO($db);
+			$assign["userList"] = $userDAO->findAll();
 		}
 		return view($templatePath, $assign);
 	}
