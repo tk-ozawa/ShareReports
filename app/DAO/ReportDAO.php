@@ -53,11 +53,49 @@ class ReportDAO
 
 	/**
 	 * 全レポート情報検索
+	 *
+	 * * @return array $rpList 該当する全てのレポート情報一覧
 	 */
 	public function findAll(): array
 	{
 		$sqlSelect = "SELECT * FROM reports ORDER BY rp_date";
 		$stmt = $this->db->prepare($sqlSelect);
+		$stmt->execute();
+		$rpList = [];
+		while ($row = $stmt->fetch()) {
+			$rp = new Report();
+			$rp->setId($row['id']);
+			$rp->setRpDate($row['rp_date']);
+			$rp->setRpTimeFrom($row['rp_time_from']);
+			$rp->setRpTimeTo($row['rp_time_to']);
+			$rp->setRpContent($row['rp_content']);
+			$rp->setRpCreatedAt($row['rp_created_at']);
+			$rp->setReportCateId($row['reportcate_id']);
+			$rp->setUserId($row['user_id']);
+			$rpList[] = $rp;
+		}
+		return $rpList;
+	}
+
+
+	/**
+	 * 検索ケースによる全レポート情報検索
+	 *
+	 * @param string $orderCase 検索ケース
+	 * @param string $orderBy 整列順
+	 * @return array $rpList 該当する全てのレポート情報一覧
+	 */
+	public function findAllOrderByCase(string $orderCase, string $orderBy): array
+	{
+		$sqlSelect = "SELECT * FROM reports ORDER BY {$orderCase}";
+		if ($orderBy == "DESC") {
+			$sqlSelect .= " DESC";
+		}
+		else {
+			$sqlSelect .= " ASC";
+		}
+		$stmt = $this->db->prepare($sqlSelect);
+		$stmt->bindValue(":orderCase", $orderCase, PDO::PARAM_STR);
 		$stmt->execute();
 		$rpList = [];
 		while ($row = $stmt->fetch()) {
@@ -100,6 +138,35 @@ class ReportDAO
 			$rp->setUserId($row['user_id']);
 		}
 		return $rp;
+	}
+
+
+	/**
+	 * ユーザーIDによるレポート情報検索
+	 *
+	 * @param int $usId 検索するユーザーID
+	 * @return array $rpList 該当するレポートリスト
+	 */
+	public function findByUsId(int $usId): array
+	{
+		$sqlSelect = "SELECT * FROM reports WHERE user_id = :user_id";
+		$stmt = $this->db->prepare($sqlSelect);
+		$stmt->bindValue(":user_id", $usId, PDO::PARAM_INT);
+		$stmt->execute();
+		$rpList = [];
+		while ($row = $stmt->fetch()) {
+			$rp = new Report();
+			$rp->setId($row['id']);
+			$rp->setRpDate($row['rp_date']);
+			$rp->setRpTimeFrom($row['rp_time_from']);
+			$rp->setRpTimeTo($row['rp_time_to']);
+			$rp->setRpContent($row['rp_content']);
+			$rp->setRpCreatedAt($row['rp_created_at']);
+			$rp->setReportCateId($row['reportcate_id']);
+			$rp->setUserId($row['user_id']);
+			$rpList[] = $rp;
+		}
+		return $rpList;
 	}
 
 

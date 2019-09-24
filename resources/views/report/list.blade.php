@@ -19,6 +19,22 @@
 				<a class="btn btn-primary" href="/sharereports/public/reports/goAdd" role="button">新規作成</a>
 			</li>
 		</ul>
+		<ul class="navbar-nav mr-auto">
+			<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/searchList" method="GET">
+				<li class="nav-item">
+					レポート絞り込み:
+					<select class="form-control mr-sm-2" name="usId" required>
+						<option id="" value="" disabled selected>選択…</option>
+						@foreach ($userList as $us)
+							<option id="" value="{{ $us->getId() }}">{{ $us->getId() }}:{{ $us->getUsName() }}</option>
+						@endforeach
+					</select>
+				</li>
+				<li class="nav-item">
+					<button type="submit" class="btn btn-outline-success my-2 my-sm-0">検索</button>
+				</li>
+			</form>
+		</ul>
 		<div class="ml-auto">
 			<span>ログイン中:{{ session('usName') }}様</span>
 			<a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a>
@@ -33,8 +49,23 @@
 		@endif
 
 		@empty($reportList)
-		<p>レポートがありません。</p>
+		<h2>レポートがありません。</h2>
 		@else
+			<form action="/sharereports/public/reports/showList" method="get">
+				<select name="case" id="" required>
+					<option value="id" selected>レポートID</option>
+					<option value="rp_date" @if($case === "rp_date") selected @endif>作業日</option>
+					<option value="rp_created_at" @if($case === "rp_created_at") selected @endif>レポート登録日時</option>
+				</select>
+				<span>の</span>
+				<select name="orderBy" id="" required>
+					<option value="ASC" selected>昇順</option>
+					<option value="DESC" @if($orderBy === "DESC") selected @endif>降順</option>
+				</select>
+				<span>で</span>
+				<button type="submit" class="btn btn-outline-success">並び替え</button>
+			</form>
+			<h2>レポート一覧(TOP)</h2>
 			<?php $cnt = 0; ?>
 			@foreach ($reportList as $report)
 				@if ($cnt > 2)
@@ -45,7 +76,7 @@
 				@endif
 					<div class="card">
 						<div class="card-header">
-							<h2 class="card-title">ID:{{ $report->getId() }}</h2>
+							<h3 class="card-title">ID:{{ $report->getId() }}</h3>
 						</div>
 						<ul class="list-group list-group-flush">
 							<li class="list-group-item">報告者ID:{{ $report->getUserId() }}</li>
