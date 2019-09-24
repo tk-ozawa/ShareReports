@@ -54,11 +54,14 @@ class ReportDAO
 	/**
 	 * 全レポート情報検索
 	 *
-	 * * @return array $rpList 該当する全てのレポート情報一覧
+	 * @param string $orderCase 初期値:'rp_date' 並び替え対象のカラム名
+	 * @param bool $order 初期値:true 整列順(true:昇順, false:降順)
+	 * @return array $rpList 該当する全てのレポート情報一覧
 	 */
-	public function findAll(): array
+	public function findAll(string $orderCase = 'rp_date', bool $order = true): array
 	{
-		$sqlSelect = "SELECT * FROM reports ORDER BY rp_date";
+		$orderBy = ($order)? 'ASC' : 'DESC';
+		$sqlSelect = "SELECT * FROM reports ORDER BY {$orderCase} {$orderBy}";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->execute();
 		$rpList = [];
@@ -79,23 +82,85 @@ class ReportDAO
 
 
 	/**
-	 * 検索ケースによる全レポート情報検索
+	 * 作業種類IDによる全レポート情報検索
 	 *
-	 * @param string $orderCase 検索ケース
-	 * @param string $orderBy 整列順
+	 * @param int $rcId 検索する作業種類ID
+	 * @param string $orderCase 初期値:'rp_date' 並び替え対象のカラム名
+	 * @param bool $order 初期値:true 整列順(true:昇順, false:降順)
 	 * @return array $rpList 該当する全てのレポート情報一覧
 	 */
-	public function findAllOrderByCase(string $orderCase, string $orderBy): array
+	public function findByRcId(int $rcId, string $orderCase = 'rp_date', bool $order = true): array
 	{
-		$sqlSelect = "SELECT * FROM reports ORDER BY {$orderCase}";
-		if ($orderBy == "DESC") {
-			$sqlSelect .= " DESC";
-		}
-		else {
-			$sqlSelect .= " ASC";
-		}
+		$orderBy = ($order)? 'ASC' : 'DESC';
+		$sqlSelect = "SELECT * FROM reports WHERE reportcate_id = :reportcate_id ORDER BY {$orderCase} {$orderBy}";
 		$stmt = $this->db->prepare($sqlSelect);
-		$stmt->bindValue(":orderCase", $orderCase, PDO::PARAM_STR);
+		$stmt->bindValue(":reportcate_id", $rcId, PDO::PARAM_INT);
+		$stmt->execute();
+		$rpList = [];
+		while ($row = $stmt->fetch()) {
+			$rp = new Report();
+			$rp->setId($row['id']);
+			$rp->setRpDate($row['rp_date']);
+			$rp->setRpTimeFrom($row['rp_time_from']);
+			$rp->setRpTimeTo($row['rp_time_to']);
+			$rp->setRpContent($row['rp_content']);
+			$rp->setRpCreatedAt($row['rp_created_at']);
+			$rp->setReportCateId($row['reportcate_id']);
+			$rp->setUserId($row['user_id']);
+			$rpList[] = $rp;
+		}
+		return $rpList;
+	}
+
+
+	/**
+	 * ユーザーIDによるレポート情報検索
+	 *
+	 * @param int $usId 検索するユーザーID
+	 * @param string $orderCase 初期値:'rp_date' 並び替え対象のカラム名
+	 * @param bool $order 初期値:true 整列順(true:昇順, false:降順)
+	 * @return array $rpList 該当する全てのレポート情報一覧
+	 */
+	public function findByUsId(int $usId, string $orderCase = 'rp_date', bool $order = true): array
+	{
+		$orderBy = ($order)? 'ASC' : 'DESC';
+		$sqlSelect = "SELECT * FROM reports WHERE user_id = :user_id ORDER BY {$orderCase} {$orderBy}";
+		$stmt = $this->db->prepare($sqlSelect);
+		$stmt->bindValue(":user_id", $usId, PDO::PARAM_INT);
+		$stmt->execute();
+		$rpList = [];
+		while ($row = $stmt->fetch()) {
+			$rp = new Report();
+			$rp->setId($row['id']);
+			$rp->setRpDate($row['rp_date']);
+			$rp->setRpTimeFrom($row['rp_time_from']);
+			$rp->setRpTimeTo($row['rp_time_to']);
+			$rp->setRpContent($row['rp_content']);
+			$rp->setRpCreatedAt($row['rp_created_at']);
+			$rp->setReportCateId($row['reportcate_id']);
+			$rp->setUserId($row['user_id']);
+			$rpList[] = $rp;
+		}
+		return $rpList;
+	}
+
+
+	/**
+	 * ユーザーIDと作業種類IDによる全レポート情報検索
+	 *
+	 * @param int $usId 検索するユーザーID
+	 * @param int $rcId 検索する作業種類ID
+	 * @param string $orderCase 初期値:'rp_date' 並び替え対象のカラム名
+	 * @param bool $order 初期値:true 整列順(true:昇順, false:降順)
+	 * @return array $rpList 該当する全てのレポート情報一覧
+	 */
+	public function findByUsIdAndRcId(int $usId, int $rcId, string $orderCase = 'rp_date', bool $order = true): array
+	{
+		$orderBy = ($order)? 'ASC' : 'DESC';
+		$sqlSelect = "SELECT * FROM reports WHERE user_id = :user_id AND reportcate_id = :reportcate_id ORDER BY {$orderCase} {$orderBy}";
+		$stmt = $this->db->prepare($sqlSelect);
+		$stmt->bindValue(":user_id", $usId, PDO::PARAM_INT);
+		$stmt->bindValue(":reportcate_id", $rcId, PDO::PARAM_INT);
 		$stmt->execute();
 		$rpList = [];
 		while ($row = $stmt->fetch()) {
@@ -138,35 +203,6 @@ class ReportDAO
 			$rp->setUserId($row['user_id']);
 		}
 		return $rp;
-	}
-
-
-	/**
-	 * ユーザーIDによるレポート情報検索
-	 *
-	 * @param int $usId 検索するユーザーID
-	 * @return array $rpList 該当するレポートリスト
-	 */
-	public function findByUsId(int $usId): array
-	{
-		$sqlSelect = "SELECT * FROM reports WHERE user_id = :user_id";
-		$stmt = $this->db->prepare($sqlSelect);
-		$stmt->bindValue(":user_id", $usId, PDO::PARAM_INT);
-		$stmt->execute();
-		$rpList = [];
-		while ($row = $stmt->fetch()) {
-			$rp = new Report();
-			$rp->setId($row['id']);
-			$rp->setRpDate($row['rp_date']);
-			$rp->setRpTimeFrom($row['rp_time_from']);
-			$rp->setRpTimeTo($row['rp_time_to']);
-			$rp->setRpContent($row['rp_content']);
-			$rp->setRpCreatedAt($row['rp_created_at']);
-			$rp->setReportCateId($row['reportcate_id']);
-			$rp->setUserId($row['user_id']);
-			$rpList[] = $rp;
-		}
-		return $rpList;
 	}
 
 
