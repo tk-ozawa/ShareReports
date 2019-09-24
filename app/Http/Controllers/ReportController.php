@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 use App\Functions;
+use App\Entity\User;
 use App\Entity\Report;
 use App\DAO\ReportDAO;
 use App\DAO\ReportcateDAO;
@@ -121,8 +122,12 @@ class ReportController extends Controller
 				// 該当ユーザーのユーザー情報
 				$userDAO = new UserDAO($db);
 				$user = $userDAO->findById((int)$usId);
-				$assign["user"] = $user;
 			}
+			else {
+				$user = new User();
+				$user->setId(0);
+			}
+			$assign["user"] = $user;
 			$assign["rcId"] = $rcId;
 			// ナビゲーションバーの検索欄用
 			$userDAO = new UserDAO($db);
