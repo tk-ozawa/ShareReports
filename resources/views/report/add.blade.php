@@ -54,7 +54,6 @@
 		</div>
 	</nav>
 
-
 	@isset($validationMsgs)
 	<section id="errorMsg">
 		<p>以下のメッセージをご確認ください。</p>

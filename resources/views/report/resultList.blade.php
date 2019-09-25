@@ -54,7 +54,6 @@
 		</div>
 	</nav>
 
-
 	<nav aria-label="パンくずリスト">
 		<ol class="breadcrumb">
 			<li class="breadcrumb-item"><a href="/sharereports/public/reports/showList">レポートリスト</a></li>
