@@ -1,6 +1,12 @@
 <?php
 /**
- * ログイン
+ * アカウント登録
+ */
+Route::get("/register", "RegistrationController@prepareRegister");
+Route::post("/confirmRegister", "RegistrationController@confirmRegister");
+
+/**
+ * アカウントログイン
  */
 Route::get("/", "LoginController@goLogin");	// ログイン画面表示処理
 Route::post("/login", "LoginController@login");	// ログイン処理
