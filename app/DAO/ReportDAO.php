@@ -61,7 +61,7 @@ class ReportDAO
 	public function findAll(string $orderCase = 'rp_date', bool $order = true): array
 	{
 		$orderBy = ($order)? 'ASC' : 'DESC';
-		$sqlSelect = "SELECT * FROM reports INNER JOIN reportcates rc ON rc.id = reports.reportcate_id WHERE rc.rc_list_flg = 1 ORDER BY {$orderCase} {$orderBy}";
+		$sqlSelect = "SELECT * FROM reports rp INNER JOIN reportcates rc ON rc.id = rp.reportcate_id WHERE rc.rc_list_flg = 1 ORDER BY rp.{$orderCase} {$orderBy}";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->execute();
 		$rpList = [];
@@ -92,7 +92,7 @@ class ReportDAO
 	public function findByRcId(int $rcId, string $orderCase = 'rp_date', bool $order = true): array
 	{
 		$orderBy = ($order)? 'ASC' : 'DESC';
-		$sqlSelect = "SELECT * FROM reports INNER JOIN reportcates rc ON rc.id = reports.reportcate_id WHERE rc.rc_list_flg = 1 AND reportcate_id = :reportcate_id ORDER BY {$orderCase} {$orderBy}";
+		$sqlSelect = "SELECT * FROM reports rp INNER JOIN reportcates rc ON rc.id = rp.reportcate_id WHERE rc.rc_list_flg = 1 AND rp.reportcate_id = :reportcate_id ORDER BY rp.{$orderCase} {$orderBy}";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->bindValue(":reportcate_id", $rcId, PDO::PARAM_INT);
 		$stmt->execute();
@@ -124,7 +124,7 @@ class ReportDAO
 	public function findByUsId(int $usId, string $orderCase = 'rp_date', bool $order = true): array
 	{
 		$orderBy = ($order)? 'ASC' : 'DESC';
-		$sqlSelect = "SELECT * FROM reports INNER JOIN reportcates rc ON rc.id = reports.reportcate_id WHERE rc.rc_list_flg = 1 AND user_id = :user_id ORDER BY {$orderCase} {$orderBy}";
+		$sqlSelect = "SELECT * FROM reports rp INNER JOIN reportcates rc ON rc.id = rp.reportcate_id WHERE rc.rc_list_flg = 1 AND rp.user_id = :user_id ORDER BY rp.{$orderCase} {$orderBy}";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->bindValue(":user_id", $usId, PDO::PARAM_INT);
 		$stmt->execute();
@@ -157,7 +157,7 @@ class ReportDAO
 	public function findByUsIdAndRcId(int $usId, int $rcId, string $orderCase = 'rp_date', bool $order = true): array
 	{
 		$orderBy = ($order)? 'ASC' : 'DESC';
-		$sqlSelect = "SELECT * FROM reports INNER JOIN reportcates rc ON rc.id = reports.reportcate_id WHERE rc.rc_list_flg = 1 AND user_id = :user_id AND reportcate_id = :reportcate_id ORDER BY {$orderCase} {$orderBy}";
+		$sqlSelect = "SELECT * FROM reports rp INNER JOIN reportcates rc ON rc.id = rp.reportcate_id WHERE rc.rc_list_flg = 1 AND rp.user_id = :user_id AND rp.reportcate_id = :reportcate_id ORDER BY rp.{$orderCase} {$orderBy}";
 		$stmt = $this->db->prepare($sqlSelect);
 		$stmt->bindValue(":user_id", $usId, PDO::PARAM_INT);
 		$stmt->bindValue(":reportcate_id", $rcId, PDO::PARAM_INT);
