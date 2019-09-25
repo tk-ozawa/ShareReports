@@ -15,11 +15,6 @@
 	<nav class="navbar navbar-light bg-light">
 		<a href="/sharereports/public/reports/showList"><h1>レポート管理システム</h1></a>
 		<ul class="navbar-nav mr-auto">
-			<li class="nav-item">
-				<a class="btn btn-primary" href="/sharereports/public/reports/goAdd" role="button">新規作成</a>
-			</li>
-		</ul>
-		<ul class="navbar-nav mr-auto">
 			<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/searchList" method="GET">
 				<li class="nav-item">
 					絞り込み:
@@ -52,11 +47,13 @@
 			</form>
 		</ul>
 		<div class="ml-auto">
-			<span>ログイン中:{{ session('usName') }}様</span>
+			<a class="btn btn-primary" href="/sharereports/public/reports/goAdd" role="button">レポート作成</a>
 			<a href="/sharereports/public/reports/searchList?usId={{ session('usId') }}&rcId=all"><button class="btn btn-info">マイページ</button></a>
+			<span>ログイン中:{{ session('usName') }}様</span>
 			<a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a>
 		</div>
 	</nav>
+
 
 	<nav aria-label="パンくずリスト">
 		<ol class="breadcrumb">

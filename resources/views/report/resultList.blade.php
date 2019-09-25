@@ -15,11 +15,6 @@
 	<nav class="navbar navbar-light bg-light">
 		<a href="/sharereports/public/reports/showList"><h1>レポート管理システム</h1></a>
 		<ul class="navbar-nav mr-auto">
-			<li class="nav-item">
-				<a class="btn btn-primary" href="/sharereports/public/reports/goAdd" role="button">新規作成</a>
-			</li>
-		</ul>
-		<ul class="navbar-nav mr-auto">
 			<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/searchList" method="GET">
 				<li class="nav-item">
 					絞り込み:
@@ -28,7 +23,7 @@
 					<select class="form-control mr-sm-2" name="usId" required>
 						<option id="" value="all" selected>全員</option>
 						@foreach ($userList as $us)
-							<option id="" value="{{ $us->getId() }}" @if($user->getId() == $us->getId()) selected @endif>{{ $us->getId() }}:{{ $us->getUsName() }}</option>
+							<option id="" value="{{ $us->getId() }}">{{ $us->getId() }}:{{ $us->getUsName() }}</option>
 						@endforeach
 					</select>
 				</li>
@@ -39,7 +34,7 @@
 					<select class="form-control mr-sm-2" name="rcId" required>
 						<option id="" value="all" selected>全作業種類</option>
 						@foreach ($reportCateList as $rpCate)
-							<option id="" value="{{ $rpCate->getId() }}" @if($rcId == $rpCate->getId()) selected @endif>{{ $rpCate->getId() }}:{{ $rpCate->getRcName() }}</option>
+							<option id="" value="{{ $rpCate->getId() }}">{{ $rpCate->getId() }}:{{ $rpCate->getRcName() }}</option>
 						@endforeach
 					</select>
 				</li>
@@ -52,11 +47,13 @@
 			</form>
 		</ul>
 		<div class="ml-auto">
-			<span>ログイン中:{{ session('usName') }}様</span>
+			<a class="btn btn-primary" href="/sharereports/public/reports/goAdd" role="button">レポート作成</a>
 			<a href="/sharereports/public/reports/searchList?usId={{ session('usId') }}&rcId=all"><button class="btn btn-info">マイページ</button></a>
+			<span>ログイン中:{{ session('usName') }}様</span>
 			<a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a>
 		</div>
 	</nav>
+
 
 	<nav aria-label="パンくずリスト">
 		<ol class="breadcrumb">
