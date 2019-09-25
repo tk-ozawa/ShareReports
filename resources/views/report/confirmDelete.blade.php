@@ -22,13 +22,29 @@
 		<ul class="navbar-nav mr-auto">
 			<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/searchList" method="GET">
 				<li class="nav-item">
-					レポート絞り込み:
+					絞り込み:
+				</li>
+				<li class="nav-item">
 					<select class="form-control mr-sm-2" name="usId" required>
-						<option id="" value="" disabled selected>選択…</option>
+						<option id="" value="all" selected>全員</option>
 						@foreach ($userList as $us)
 							<option id="" value="{{ $us->getId() }}">{{ $us->getId() }}:{{ $us->getUsName() }}</option>
 						@endforeach
 					</select>
+				</li>
+				<li class="nav-item">
+					の
+				</li>
+				<li class="nav-item">
+					<select class="form-control mr-sm-2" name="rcId" required>
+						<option id="" value="all" selected>全作業種類</option>
+						@foreach ($reportCateList as $rpCate)
+							<option id="" value="{{ $rpCate->getId() }}">{{ $rpCate->getId() }}:{{ $rpCate->getRcName() }}</option>
+						@endforeach
+					</select>
+				</li>
+				<li class="nav-item">
+					を対象で
 				</li>
 				<li class="nav-item">
 					<button type="submit" class="btn btn-outline-success my-2 my-sm-0">検索</button>
@@ -36,7 +52,7 @@
 			</form>
 		</ul>
 		<div class="ml-auto">
-			<span>ログイン中:{{ session('usName') }}様</span>
+			<a href="/sharereports/public/reports/searchList?usId={{ session('usId') }}&rcId=all"><button class="btn btn-info">ログイン中:{{ session('usName') }}様</button></a>
 			<a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a>
 		</div>
 	</nav>
