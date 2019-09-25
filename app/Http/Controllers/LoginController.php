@@ -47,7 +47,7 @@ class LoginController extends Controller
 				$session->put("loginFlg", true);
 				$session->put("usId", $user->getId());
 				$session->put("usName", $user->getUsName());
-				$session->put("auth", 1);
+				$session->put("auth", $user->getUsAuth());
 				$isRedirect = true;
 			}
 			else {
