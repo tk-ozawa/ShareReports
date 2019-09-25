@@ -54,7 +54,6 @@
 		</div>
 	</nav>
 
-
 	<nav aria-label="パンくずリスト">
 		<ol class="breadcrumb">
 			<li class="breadcrumb-item"><a href="/sharereports/public/reports/showList">レポートリスト</a></li>
@@ -76,12 +75,16 @@
 			<dt>レポート登録日時</dt>
 				<dd>{{ $report->getRpCreatedAt() }}</dd>
 		</dl>
+		@if (session('auth') == 1)
 		<a href="../prepareEdit/{{ $report->getId() }}">
 			<button class="btn btn-outline-secondary" type="button">編集する</button>
 		</a>
 		<a href="../confirmDelete/{{ $report->getId() }}">
 			<button class="btn btn-danger" type="button">削除する</button>
 		</a>
+		@else
+		<span style="color:gray;">[ご利用中のアカウントでは編集権限がありません。]</span>
+		@endif
 	</div>
 
 	<script src="{{ asset('js/app.js') }}"></script>
