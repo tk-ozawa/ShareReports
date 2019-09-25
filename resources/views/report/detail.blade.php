@@ -52,7 +52,8 @@
 			</form>
 		</ul>
 		<div class="ml-auto">
-			<a href="/sharereports/public/reports/searchList?usId={{ session('usId') }}&rcId=all"><button class="btn btn-info">ログイン中:{{ session('usName') }}様</button></a>
+			<span>ログイン中:{{ session('usName') }}様</span>
+			<a href="/sharereports/public/reports/searchList?usId={{ session('usId') }}&rcId=all"><button class="btn btn-info">マイページ</button></a>
 			<a class="btn btn-danger" href="/sharereports/public/logout" role="button">ログアウト</a>
 		</div>
 	</nav>
