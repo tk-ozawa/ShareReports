@@ -39,9 +39,11 @@ class ReportController extends Controller
 				$case = $request->input('case');
 			}
 			$orderBy = true;
-			if (!empty($request->input('orderBy'))) {
-				// 並び順に指定があった時…
+			$assign["orderBy"] = 'ASC';
+			if ($request->input('orderBy') === 'DESC') {
+				// 並び順で降順が指定されていた時…
 				$orderBy = false;
+				$assign["orderBy"] = 'DESC';
 			}
 			// reportsテーブルの全情報を取得
 			if (!empty($request->input('case'))) {
@@ -54,7 +56,6 @@ class ReportController extends Controller
 				$reportList = $reportDAO->findAll();
 			}
 			$assign["case"] = $case;
-			$assign["orderBy"] = $orderBy;
 			if (empty($reportList)) {
 				$request->session()->put('flash', 'レポートが登録されていません。');
 			}
@@ -92,12 +93,12 @@ class ReportController extends Controller
 			}
 			$assign["case"] = $case;
 			$orderBy = true;
-			if (!empty($request->input('orderBy'))) {
-				// 並び順に指定があった時…
+			if ($request->input('orderBy') === 'DESC') {
+				// 並び順で降順が指定されていた時…
 				$orderBy = false;
 			}
+			// dd($orderBy);
 			$assign["orderBy"] = $orderBy;
-
 			// 絞り込み
 			$usId = $request->input('usId');
 			$rcId = $request->input('rcId');

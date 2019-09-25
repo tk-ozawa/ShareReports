@@ -76,8 +76,8 @@
 				</select>
 				<span>の</span>
 				<select name="orderBy" id="" required>
-					<option value="ASC" selected>昇順</option>
-					<option value="DESC" @if($orderBy === "DESC") selected @endif>降順</option>
+					<option value="ASC" @if($orderBy === 'ASC') selected @endif>昇順</option>
+					<option value="DESC" @if($orderBy === 'DESC') selected @endif>降順</option>
 				</select>
 				<span>で</span>
 				<button type="submit" class="btn btn-outline-success">並び替え</button>
