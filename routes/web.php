@@ -2,8 +2,10 @@
 /**
  * アカウント登録
  */
-Route::get("/register", "RegistrationController@prepareRegister");
-Route::post("/confirmRegister", "RegistrationController@confirmRegister");
+Route::post("/prepareRegister", "RegistrationController@prepareRegister");	// アカウント登録画面表示処理
+Route::post("/confirmRegister", "RegistrationController@confirmRegister");	// アカウント登録情報確認画面表示処理
+Route::post("/completeRegister", "RegistrationController@register");	// アカウント登録情報確認画面表示処理
+
 
 /**
  * アカウントログイン
