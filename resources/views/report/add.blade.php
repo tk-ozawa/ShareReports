@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+	<link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon.png') }}">
 	<link href="{{ asset('css/app.css') }}" rel="stylesheet">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
