@@ -9,6 +9,7 @@
 	<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>レポート管理システム</title>
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
 	<div class="container">
@@ -35,7 +36,15 @@
 				<label for="loginUsPasswd">パスワード</label>
 				<input id="loginUsPasswd" class="form-control" type="password" name="loginUsPasswd" value="hogehoge" required>
 			</div>
-			<button type="submit" class="form-control">ログイン</button>
+			<div class="form-group">
+				<button type="submit" class="form-control btn btn-outline-info">ログイン</button>
+			</div>
+		</form>
+		<form action="/sharereports/public/prepareRegister" method="post">
+			@csrf
+			<div class="form-group">
+				<button type="submit" class="form-control btn btn-outline-primary">アカウント新規登録</button>
+			</div>
 		</form>
 	</div>
 
