@@ -30,11 +30,11 @@
 			@csrf
 			<div class="form-group">
 				<label for="loginUsMail">ID</label>
-				<input type="text" id="loginUsMail" class="form-control" name="loginUsMail" value="test@test.com" required>
+				<input type="text" id="loginUsMail" class="form-control" name="loginUsMail" required>
 			</div>
 			<div class="form-group">
 				<label for="loginUsPasswd">パスワード</label>
-				<input id="loginUsPasswd" class="form-control" type="password" name="loginUsPasswd" value="hogehoge" required>
+				<input id="loginUsPasswd" class="form-control" type="password" name="loginUsPasswd" required>
 			</div>
 			<div class="form-group">
 				<button type="submit" class="form-control btn btn-outline-info">ログイン</button>
