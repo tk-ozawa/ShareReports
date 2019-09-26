@@ -20,7 +20,7 @@ class RegisterShipped extends Mailable
 
 	public function build()
 	{
-		// return $this->subject('タイトルサンプル')->text('email/templates/registers_mail');
+		// return $this->subject('タイトルサンプル')->text('emails.templates.registers_mail');
 		return $this->view('emails.templates.registers_mail')->subject('会員登録完了しました。')->with($sendData);
 	}
 }

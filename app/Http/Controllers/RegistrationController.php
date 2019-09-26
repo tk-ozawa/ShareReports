@@ -66,12 +66,11 @@ class RegistrationController extends Controller
 		if ($rpId === -1) {
 			$assign["errorMsg"] = "ユーザー情報登録に失敗しました。もう一度はじめからやり直してください。";
 			$templatePath = "error";
-
-			// メール送信
-			Mail::to($user->getUsMail())->send(new RegisterShipped($user));
 		}
 		else {
 			$assign["user"] = $user;
+			// メール送信
+			Mail::to($user->getUsMail())->send(new RegisterShipped($user));
 		}
 		return view($templatePath, $assign);
 	}
