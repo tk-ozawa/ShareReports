@@ -15,12 +15,20 @@ class RegisterShipped extends Mailable
 
 	public function __construct($sendData)
 	{
-		$this->sendData = $sendData;
+		$this->mail = $sendData->getUsMail();
+		$this->name = $sendData->getUsName();
+		$this->passwd = $sendData->getUsPassword();
 	}
 
 	public function build()
 	{
 		// return $this->subject('タイトルサンプル')->text('emails.templates.registers_mail');
-		return $this->view('emails.templates.registers_mail')->subject('会員登録完了しました。')->with($sendData);
+		return $this->view('emails.templates.registers_mail')
+					->subject('会員登録完了しました。')
+					->with([
+						'mail' => $this->mail,
+						'name' => $this->name,
+						'passwd' => $this->passwd,
+					]);
 	}
 }

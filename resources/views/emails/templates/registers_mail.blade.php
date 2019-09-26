@@ -1,7 +1,17 @@
-[レポート管理システム]
-会員登録が完了しました。
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<p>[レポート管理システム](https//tk-ozawa.info/sharereports/public/)</p>
+	<p>会員登録が完了しました。</p>
 
-登録情報
-メールアドレス:{{ $user->getUsMail() }}
-ユーザー名:{{ $user->getUsName() }}
-パスワード:{{ $user->getUsPassword() }}
+	<p>登録情報</p>
+	<dl>
+		<dt>メールアドレス:</dt><dd>{{ $mail }}</dd>
+		<dt>ユーザー名:</dt><dd>{{ $name }}</dd>
+		<dt>パスワード:</dt><dd>{{ $passwd }}</dd>
+	</dl>
+</body>
+</html>
