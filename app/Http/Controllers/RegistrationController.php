@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Mail\SampleMail;
+use App\Mail\RegisterShipped;
 use Mail;
 
 use App\Entity\User;
@@ -68,10 +68,7 @@ class RegistrationController extends Controller
 			$templatePath = "error";
 
 			// メール送信
-			$mail_name = $user->getUsName();
-			$mail_text = 'ユーザー名:'. $mail_name.' 様でご登録しました。';
-			$mail_to = $user->getUsMail();
-			Mail::to($mail_to)->send( new SampleMail($mail_name, $mail_text, $user) );
+			Mail::to($user->getUsMail())->send(new RegisterShipped($user));
 		}
 		else {
 			$assign["user"] = $user;
