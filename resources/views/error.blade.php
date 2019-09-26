@@ -2,7 +2,6 @@
 <html lang="ja">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="author" content="Shinzo SAITO">
 		<title>Error | レポート管理システム</title>
 	</head>
 	<body>
@@ -14,6 +13,6 @@
 				{{ $errorMsg }}
 			</p>
 		</section>
-		<p><a href="/sharereports/public/reports/showList">TOPへ戻る</a></p>
+		<p><a href="/sharereports/public/">ログインへ戻る</a></p>
 	</body>
 </html>
