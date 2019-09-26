@@ -27,6 +27,29 @@ class UserDAO
 
 
 	/**
+	 * ユーザー情報登録
+	 *
+	 * @param User $us 登録対象のユーザー情報
+	 * @return int $id 登録したレコードID
+	 */
+	public function insert(User $us): int
+	{
+		$sqlInsert = "INSERT INTO users (us_mail, us_name, us_password, us_auth) VALUES (:us_mail, :us_name, :us_password, 2)";
+		$stmt = $this->db->prepare($sqlInsert);
+		$stmt->bindValue(":us_mail", $us->getUsMail(), PDO::PARAM_STR);
+		$stmt->bindValue(":us_name", $us->getUsName(), PDO::PARAM_STR);
+		$stmt->bindValue(":us_password", password_hash($us->getUsPassword(), PASSWORD_DEFAULT), PDO::PARAM_STR);
+		$result = $stmt->execute();
+		if ($result) {
+			$id = $this->db->lastInsertId();
+		} else {
+			$id = -1;
+		}
+		return $id;
+	}
+
+
+	/**
 	 * 全ユーザー情報検索
 	 *
 	 * @return array $usList 全ユーザー情報
@@ -81,7 +104,7 @@ class UserDAO
 	 * @param int $id 検索するユーザーID
 	 * @return User $us ユーザー情報
 	 */
-	public function findById(int $id): User
+	public function findById(int $id): ?User
 	{
 		$sqlSelect = "SELECT * FROM users WHERE id = :id";
 		$stmt = $this->db->prepare($sqlSelect);
