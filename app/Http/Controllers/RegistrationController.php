@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Mail\SampleMail;
+use Mail;
 
 use App\Entity\User;
 use App\DAO\UserDAO;
@@ -64,6 +66,12 @@ class RegistrationController extends Controller
 		if ($rpId === -1) {
 			$assign["errorMsg"] = "ユーザー情報登録に失敗しました。もう一度はじめからやり直してください。";
 			$templatePath = "error";
+
+			// メール送信
+			$mail_name = $user->getUsName();
+			$mail_text = 'ユーザー名:'. $mail_name.' 様でご登録しました。';
+			$mail_to = $user->getUsMail();
+			Mail::to($mail_to)->send( new SampleMail($mail_name, $mail_text, $user) );
 		}
 		else {
 			$assign["user"] = $user;
