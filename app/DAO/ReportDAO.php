@@ -30,6 +30,7 @@ class ReportDAO
 	 * レポート情報登録
 	 *
 	 * @param Report $rp 登録対象のレポート情報
+	 * @return int $id 登録したレコードID
 	 */
 	public function insert(Report $rp): int
 	{
@@ -184,7 +185,7 @@ class ReportDAO
 	 *
 	 * @param int $id 検索するレポートID
 	 */
-	public function findByRpId(int $id): Report
+	public function findByRpId(int $id): ?Report
 	{
 		$sqlSelect = "SELECT * FROM reports WHERE id = :id";
 		$stmt = $this->db->prepare($sqlSelect);
