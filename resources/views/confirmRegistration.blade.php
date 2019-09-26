@@ -49,7 +49,7 @@
 				<input type="hidden" name="registUsMail" value="{{ $user->getUsMail() }}">
 				<input type="hidden" name="registUsName" value="{{ $user->getUsName() }}">
 				<input type="hidden" name="registUsPasswd" value="{{ $user->getUsPassword() }}">
-				<button type="submit" class="form-control btn btn-outline-warning">入力画面に戻る</button></a>
+				<button type="submit" class="form-control btn btn-outline-warning">入力画面に戻る</button>
 			</div>
 		</form>
 	</div>

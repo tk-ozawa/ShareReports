@@ -43,12 +43,6 @@ class RegistrationController extends Controller
 		$user->setUsMail($request->input('registUsMail'));
 		$user->setUsName($request->input('registUsName'));
 		$user->setUsPassword($request->input('registUsPasswd'));
-		$request->validate([
-			'registUsName' => 'required',
-			'registUsMail' => 'required|email',
-			'registUsPasswd' => 'required',
-			'g-recaptcha-response' => 'required|captcha', //reCAPTCHA評価
-		]);
 		// ここでメール重複確認処理とかのバリデーションチェックを入れたい
 		$assign["user"] = $user;
 		return view($templatePath, $assign);

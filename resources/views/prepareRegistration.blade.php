@@ -36,16 +36,12 @@
 				<label for="registUsPasswd">パスワード</label>
 				<input id="registUsPasswd" class="form-control" type="password" name="registUsPasswd" value="{{ $user->getUsPassword() }}" required>
 			</div>
-			<div class="form-group col-md-4">
-				<label for="ReCaptcha">Recaptcha:</label>
-				{!! NoCaptcha::renderJs() !!}
-				{!! NoCaptcha::display() !!}
-			</div>
 			<div class="form-group">
 				<button type="submit" class="form-control btn btn-outline-primary">内容を確認する</button>
 			</div>
 		</form>
 		<form action="/sharereports/public/" method="get">
+			@csrf
 			<div class="form-group">
 				<button class="form-control btn btn-outline-danger">ログイン画面に戻る</button>
 			</div>
