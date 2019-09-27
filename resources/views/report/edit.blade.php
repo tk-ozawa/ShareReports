@@ -1,60 +1,8 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-	<link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon.png') }}">
-	<link href="{{ asset('css/app.css') }}" rel="stylesheet">
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" />
-	<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
-	<meta name="csrf-token" content="{{ csrf_token() }}">
-	<title>レポート編集画面 / ID:{{ $report->getId() }}</title>
-</head>
-<body>
-	<nav class="navbar navbar-expand-sm navbar-light sticky-top" style="background-color: lightblue;">
-		<a class="navbar-brand" href="/sharereports/public/reports/showList">レポート管理システム</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navmenu2a" aria-controls="navmenu2a" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navmenu2a">
-			<div class="navbar-nav">
-				<ul class="navbar-nav">
-					<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/searchList" method="GET">
-						<li class="nav-item">
-							<select class="form-control mr-sm-2" name="usId" required>
-								<option id="" value="all" selected>全員</option>
-								@foreach ($userList as $us)
-									<option id="" value="{{ $us->getId() }}">{{ $us->getId() }}:{{ $us->getUsName() }}</option>
-								@endforeach
-							</select>
-						</li>
-						<li class="nav-item">
-							<select class="form-control mr-sm-2" name="rcId" required>
-								<option id="" value="all" selected>全作業種類</option>
-								@foreach ($reportCateList as $rpCate)
-									<option id="" value="{{ $rpCate->getId() }}">{{ $rpCate->getId() }}:{{ $rpCate->getRcName() }}</option>
-								@endforeach
-							</select>
-						</li>
-						<li class="nav-item">
-							<button type="submit" class="btn btn-outline-success my-2 my-sm-0">検索</button>
-						</li>
-					</form>
-				</ul>
-			</div>
-			<div class="ml-auto">
-				<span class="nav-item my-2 my-lg-0 mr-sm-2">ログイン中:{{ session('usName') }}様</span>
-			</div>
-			<a class="nav-item my-2 my-lg-0 mr-sm-2" href="/sharereports/public/reports/goAdd" role="button"><button class="btn btn-primary">レポート作成</button></a>
-			<a class="nav-item my-2 my-lg-0 mr-sm-2" href="/sharereports/public/reports/searchList?usId={{ session('usId') }}&rcId=all"><button class="btn btn-info">マイページ</button></a>
-			<div class="ml-auto">
-				<a class="nav-item btn btn-danger mr-sm-2 my-2 my-lg-0" href="/sharereports/public/logout" role="button">ログアウト</a>
-			</div>
-		</div>
-	</nav>
+@extends('report.layouts.master')
 
+@section('title', "レポート編集画面 / ID:".$report->getId())
+
+@section('breadcrumb')
 	<nav aria-label="パンくずリスト">
 		<ol class="breadcrumb">
 			<li class="breadcrumb-item"><a href="/sharereports/public/reports/showList">レポートリスト</a></li>
@@ -62,7 +10,6 @@
 			<li class="breadcrumb-item active" aria-current="page">レポート編集</li>
 		</ol>
 	</nav>
-
 	@isset($validationMsgs)
 	<section id="errorMsg">
 		<p><strong>以下のメッセージをご確認ください。</strong></p>
@@ -73,74 +20,75 @@
 		</ul>
 	</section>
 	@endisset
+@endsection
 
-	<div class="container">
-		<h2>レポートID: {{ $report->getId() }}</h2>
-		<form action="/sharereports/public/reports/edit" method="post">
-			@csrf
-			<input type="hidden" name="rpId" value="{{ $report->getId() }}">
-			<div class="form-group">
-				<div class="row">
-					<div class="col">
-						<label for="datetimepicker1" class="pt-2 pr-2">作業日</label>
-						<div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-							<input type="text" class="form-control datetimepicker-input" name="rpDate" data-target="#datetimepicker1" value="{{ $report->getRpDate() }}" required />
-							<div class="input-group-prepend" data-target="#datetimepicker1" data-toggle="datetimepicker">
-								<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
-							</div>
+@section('container')
+	<h2>レポートID: {{ $report->getId() }}</h2>
+	<form action="/sharereports/public/reports/edit" method="post">
+		@csrf
+		<input type="hidden" name="rpId" value="{{ $report->getId() }}">
+		<div class="form-group">
+			<div class="row">
+				<div class="col">
+					<label for="datetimepicker1" class="pt-2 pr-2">作業日</label>
+					<div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+						<input type="text" class="form-control datetimepicker-input" name="rpDate" data-target="#datetimepicker1" value="{{ $report->getRpDate() }}" required />
+						<div class="input-group-prepend" data-target="#datetimepicker1" data-toggle="datetimepicker">
+							<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
 						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col">
-						<label for="datetimepicker2" class="pt-2 pr-2">作業開始時刻</label>
-						<div class="input-group date" id="datetimepicker2" data-target-input="nearest">
-							<input type="text" class="form-control datetimepicker-input" name="rpTimeFrom" data-target="#datetimepicker2" value="{{ $report->getRpTimeFrom() }}" required />
-							<div class="input-group-prepend" data-target="#datetimepicker2" data-toggle="datetimepicker">
-								<div class="input-group-text"><i class="far fa-clock"></i></div>
-							</div>
-						</div>
-					</div>
-					<div class="col">
-						<label for="datetimepicker3" class="pt-2 pr-2">作業終了時刻</label>
-						<div class="input-group date" id="datetimepicker3" data-target-input="nearest">
-							<input type="text" class="form-control datetimepicker-input" name="rpTimeTo" data-target="#datetimepicker3" value="{{ $report->getRpTimeTo() }}" required />
-							<div class="input-group-prepend" data-target="#datetimepicker3" data-toggle="datetimepicker">
-								<div class="input-group-text"><i class="far fa-clock"></i></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col">
-						<label for="reportcates" class="pt-2 pr-2">作業種類</label>
-						<select class="custom-select" id="reportcates" name="reportCateId" required>
-							<option selected disabled value="">選択...</option>
-							@foreach ($reportcateList as $reportcate)
-								<option value="{{ $reportcate->getId() }}" @if( $reportcate->getId()  == $report->getReportCateId()) selected @endif>
-									{{ $reportcate->getRcName() }}
-								</option>
-							@endforeach
-						</select>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col">
-						<label for="reportContent" class="pt-2 pr-2">作業内容</label>
-						<textarea class="form-control" id="reportContent" name="rpContent" rows="3" required>{{ $report->getRpContent() }}</textarea>
 					</div>
 				</div>
 			</div>
-			<div class="float-left">
-					<a href="../detail/{{ $report->getId() }}">
-						<button class="btn btn-outline-secondary" type="button">戻る</button>
-					</a>
-				<button type="submit" class="btn btn-primary">この内容に変更する</button>
+			<div class="row">
+				<div class="col">
+					<label for="datetimepicker2" class="pt-2 pr-2">作業開始時刻</label>
+					<div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+						<input type="text" class="form-control datetimepicker-input" name="rpTimeFrom" data-target="#datetimepicker2" value="{{ $report->getRpTimeFrom() }}" required />
+						<div class="input-group-prepend" data-target="#datetimepicker2" data-toggle="datetimepicker">
+							<div class="input-group-text"><i class="far fa-clock"></i></div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<label for="datetimepicker3" class="pt-2 pr-2">作業終了時刻</label>
+					<div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+						<input type="text" class="form-control datetimepicker-input" name="rpTimeTo" data-target="#datetimepicker3" value="{{ $report->getRpTimeTo() }}" required />
+						<div class="input-group-prepend" data-target="#datetimepicker3" data-toggle="datetimepicker">
+							<div class="input-group-text"><i class="far fa-clock"></i></div>
+						</div>
+					</div>
+				</div>
 			</div>
-		</form>
-	</div>
+			<div class="row">
+				<div class="col">
+					<label for="reportcates" class="pt-2 pr-2">作業種類</label>
+					<select class="custom-select" id="reportcates" name="reportCateId" required>
+						<option selected disabled value="">選択...</option>
+						@foreach ($reportcateList as $reportcate)
+							<option value="{{ $reportcate->getId() }}" @if( $reportcate->getId()  == $report->getReportCateId()) selected @endif>
+								{{ $reportcate->getRcName() }}
+							</option>
+						@endforeach
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<label for="reportContent" class="pt-2 pr-2">作業内容</label>
+					<textarea class="form-control" id="reportContent" name="rpContent" rows="3" required>{{ $report->getRpContent() }}</textarea>
+				</div>
+			</div>
+		</div>
+		<div class="float-left">
+				<a href="../detail/{{ $report->getId() }}">
+					<button class="btn btn-outline-secondary" type="button">戻る</button>
+				</a>
+			<button type="submit" class="btn btn-primary">この内容に変更する</button>
+		</div>
+	</form>
+@endsection
 
-	<script src="{{ asset('js/app.js') }}"></script>
+@section('script')
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -223,5 +171,4 @@
 			});
 		});
 	</script>
-</body>
-</html>
+@endsection
