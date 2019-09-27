@@ -10,7 +10,8 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" />
 	<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
 	<meta name="csrf-token" content="{{ csrf_token() }}">
-	<title>レポートリスト画面</title>
+	<title>@yield('title')</title>
+	<link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
 	<nav class="navbar navbar-expand-sm navbar-light sticky-top" style="background-color: lightblue;">
@@ -55,24 +56,21 @@
 		</div>
 	</nav>
 
-	<nav aria-label="パンくずリスト">
-		<ol class="breadcrumb">
-			<li class="breadcrumb-item"><a href="/sharereports/public/reports/showList">レポートリスト</a></li>
-			<li class="breadcrumb-item active" aria-current="page">レポート検索結果</li>
-		</ol>
-	</nav>
-
 	<div class="container">
+		@if (session("flashMsg"))
+		<section id="flashMsg">
+			<p>{{ session("flashMsg") }}</p>
+		</section>
+		@endif
+
 		@empty($reportList)
 		<h2>レポートがありません。</h2>
 		@else
 			<ul class="navbar-nav">
-				<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/searchList" method="get">
-					<input type="hidden" name="usId" value="{{ $user->getId() }}">
-					<input type="hidden" name="rcId" value="{{ $rcId }}">
+				<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/showList" method="get">
 					<li class="nav-item">
 						<select class="form-control mr-sm-2" name="case" id="" required>
-							<option value="id" @if($case === "id") selected @endif>レポートID</option>
+							<option value="id" selected>レポートID</option>
 							<option value="rp_date" @if($case === "rp_date") selected @endif>作業日</option>
 							<option value="rp_created_at" @if($case === "rp_created_at") selected @endif>レポート登録日時</option>
 						</select>
@@ -88,9 +86,7 @@
 					</li>
 				</form>
 			</ul>
-			@if(!empty($user))
-			<h2>"ユーザー名: {{ $user->getUsName() }}"さんの投稿レポート検索結果</h2>
-			@endif
+			<h2>レポート一覧(TOP)</h2>
 			<?php $cnt = 0; ?>
 			@foreach ($reportList as $report)
 				@if ($cnt > 2)
@@ -105,6 +101,10 @@
 						</div>
 						<ul class="list-group list-group-flush">
 							<li class="list-group-item">報告者ID:{{ $report->getUserId() }}</li>
+							<li class="list-group-item">
+								<span>本文:</span>
+								<p>{!! mb_substr($report->getRpContent(), 0, 10) !!}@if(mb_strlen($report->getRpContent()) > 10) ... @endif</p>
+							</li>
 							<li class="list-group-item">作業日:{{ $report->getRpDate() }}</li>
 							<li class="list-group-item">
 								作業種類:
@@ -121,10 +121,10 @@
 					@endif
 				@endforeach
 			@if ($cnt < 2)
-				<div class="card"></div>
+				<div class="card none"></div>
 			@endif
 			@if ($cnt < 3)
-				<div class="card"></div>
+				<div class="card none"></div>
 				</div>
 			@endif
 		@endif
