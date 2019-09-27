@@ -22,6 +22,20 @@
 				<li class="breadcrumb-item"><span style="color:gray;">アカウント登録完了</span></li>
 			</ol>
 		</nav>
+
+		@isset($validationMsgs)
+		<section id="errorMsg">
+			<p><strong>以下のメッセージをご確認ください。</strong></p>
+			<ul style="list-style-type:none;">
+				@foreach ($validationMsgs as $msg)
+					<li>
+						<div class="alert alert-danger" role="alert">{{$msg}}</div>
+					</li>
+				@endforeach
+			</ul>
+		</section>
+		@endisset
+
 		<form action="/sharereports/public/confirmRegister" method="post">
 			@csrf
 			<div class="form-group">
@@ -35,6 +49,8 @@
 			<div class="form-group">
 				<label for="registUsPasswd">パスワード</label>
 				<input id="registUsPasswd" class="form-control" type="password" name="registUsPasswd" value="{{ $user->getUsPassword() }}" required>
+				<input type="checkbox" id="password-check">
+				<label for="password-check">パスワードを表示する</label>
 			</div>
 			<div class="form-group">
 				<button type="submit" class="form-control btn btn-outline-primary">内容を確認する</button>
@@ -48,5 +64,16 @@
 		</form>
 	</div>
 	<script src="{{ asset('js/app.js') }}"></script>
+	<script>
+		const pwd = document.getElementById('registUsPasswd');
+		const pwdCheck = document.getElementById('password-check');
+		pwdCheck.addEventListener('change', function() {
+			if(pwdCheck.checked) {
+				pwd.setAttribute('type', 'text');
+			} else {
+				pwd.setAttribute('type', 'password');
+			}
+		}, false);
+	</script> 
 </body>
 </html>

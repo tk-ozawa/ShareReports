@@ -93,15 +93,21 @@ class ReportController extends Controller
 			}
 			$assign["case"] = $case;
 			$orderBy = true;
+			$assign["orderBy"] = 'ASC';
 			if ($request->input('orderBy') === 'DESC') {
 				// 並び順で降順が指定されていた時…
 				$orderBy = false;
+				$assign["orderBy"] = 'DESC';
 			}
-			// dd($orderBy);
-			$assign["orderBy"] = $orderBy;
 			// 絞り込み
 			$usId = $request->input('usId');
+			if (empty($usId)) {
+				$usId = 'all';
+			}
 			$rcId = $request->input('rcId');
+			if (empty($rcId)) {
+				$rcId = 'all';
+			}
 			$rpList = [];
 			if ($usId === 'all' && $rcId === 'all') {
 				// 全ユーザー & 全作業種類
@@ -128,8 +134,9 @@ class ReportController extends Controller
 				$user = new User();
 				$user->setId(0);
 			}
-			$assign["user"] = $user;
 			$assign["rcId"] = $rcId;
+			// dd($assign["rcId"]);
+			$assign["user"] = $user;
 			// ナビゲーションバーの検索欄用
 			$userDAO = new UserDAO($db);
 			$assign["userList"] = $userDAO->findAll();

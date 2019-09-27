@@ -67,10 +67,12 @@
 		<h2>レポートがありません。</h2>
 		@else
 			<ul class="navbar-nav">
-				<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/showList" method="get">
+				<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/searchList" method="get">
+					<input type="hidden" name="usId" value="{{ $user->getId() }}">
+					<input type="hidden" name="rcId" value="{{ $rcId }}">
 					<li class="nav-item">
 						<select class="form-control mr-sm-2" name="case" id="" required>
-							<option value="id" selected>レポートID</option>
+							<option value="id" @if($case === "id") selected @endif>レポートID</option>
 							<option value="rp_date" @if($case === "rp_date") selected @endif>作業日</option>
 							<option value="rp_created_at" @if($case === "rp_created_at") selected @endif>レポート登録日時</option>
 						</select>

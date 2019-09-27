@@ -39,11 +39,22 @@ class RegistrationController extends Controller
 	{
 		$templatePath = "confirmRegistration";
 		$assign = [];
+		$validationMsgs = [];
+
 		$user = new User();
 		$user->setUsMail($request->input('registUsMail'));
 		$user->setUsName($request->input('registUsName'));
 		$user->setUsPassword($request->input('registUsPasswd'));
-		// ここでメール重複確認処理とかのバリデーションチェックを入れたい
+		$db = DB::connection()->getPdo();
+		// バリデーション
+		$userDAO = new UserDAO($db);
+		$dbUser = $userDAO->findByUsMail($request->input('registUsMail'));
+		if (!empty($dbUser)) {
+			$validationMsgs[] = "登録済みのメールアドレスです。別のメールアドレスを登録するか、ログインしてください。";
+			$user->setUsMail('');	// メールアドレス欄を初期化
+			$templatePath = "prepareRegistration";
+			$assign["validationMsgs"] = $validationMsgs;
+		}
 		$assign["user"] = $user;
 		return view($templatePath, $assign);
 	}
@@ -68,6 +79,7 @@ class RegistrationController extends Controller
 			$templatePath = "error";
 		}
 		else {
+			// us_mail_vertify_token
 			$assign["user"] = $user;
 			// メール送信
 			Mail::to($user->getUsMail())->send(new RegisterShipped($user));

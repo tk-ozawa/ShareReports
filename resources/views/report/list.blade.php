@@ -11,6 +11,7 @@
 	<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<title>レポートリスト画面</title>
+	<link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
 	<nav class="navbar navbar-expand-sm navbar-light" style="background-color: lightblue;">
@@ -120,10 +121,10 @@
 					@endif
 				@endforeach
 			@if ($cnt < 2)
-				<div class="card"></div>
+				<div class="card none"></div>
 			@endif
 			@if ($cnt < 3)
-				<div class="card"></div>
+				<div class="card none"></div>
 				</div>
 			@endif
 		@endif
