@@ -54,9 +54,9 @@ class UserDAO
 	 * ユーザー情報本登録
 	 *
 	 * @param User $us 更新対象のユーザー情報
-	 * @return int $id 更新したレコードID
+	 * @return bool $result 更新処理結果
 	 */
-	public function updateUsAuth(User $us): int
+	public function updateUsAuth(User $us): bool
 	{
 		$sqlUpdate = "UPDATE users SET us_auth = 2 WHERE id = :id";
 		$stmt = $this->db->prepare($sqlUpdate);
