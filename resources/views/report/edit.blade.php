@@ -65,10 +65,10 @@
 
 	@isset($validationMsgs)
 	<section id="errorMsg">
-		<p>以下のメッセージをご確認ください。</p>
+		<p><strong>以下のメッセージをご確認ください。</strong></p>
 		<ul>
 			@foreach ($validationMsgs as $msg)
-				<li>{{$msg}}</li>
+				<li><div class="alert alert-danger" role="alert">{{$msg}}</div></li>
 			@endforeach
 		</ul>
 	</section>
