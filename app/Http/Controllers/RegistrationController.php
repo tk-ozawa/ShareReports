@@ -35,7 +35,7 @@ class RegistrationController extends Controller
 			$this->user->setUsPassword($registUsPasswd);
 		}
 		$assign["user"] = $this->user;
-		return view("prepareRegistration", $assign);
+		return view("registration.prepare", $assign);
 	}
 
 	/**
@@ -43,7 +43,7 @@ class RegistrationController extends Controller
 	 */
 	public function confirmRegister(Request $request)
 	{
-		$templatePath = "confirmRegistration";
+		$templatePath = "registration.confirm";
 		$assign = [];
 
 		$this->user->setUsMail(		$request->input('registUsMail'));
@@ -56,7 +56,7 @@ class RegistrationController extends Controller
 			// 入力画面に戻る
 			$this->user->setUsMail('');	// メールアドレス欄を初期化
 			$assign["validationMsgs"] = "登録済みのメールアドレスです。別のメールアドレスを登録するか、ログインしてください。";
-			$templatePath = "prepareRegistration";
+			$templatePath = "registration.prepare";
 		}
 		$assign["user"] = $this->user;
 		return view($templatePath, $assign);
@@ -67,7 +67,7 @@ class RegistrationController extends Controller
 	 */
 	public function register(Request $request)
 	{
-		$templatePath = "completeRegistration";
+		$templatePath = "registration.complete";
 		$assign = [];
 		$this->user->setUsMail(				$request->input('registUsMail'));
 		$this->user->setUsName(				$request->input('registUsName'));
@@ -104,7 +104,7 @@ class RegistrationController extends Controller
 		else {
 			if ($userDAO->updateUsAuth($user)) {	// us_authを2に
 				$assign["user"] = $user;
-				$templatePath = "applyRegistration";
+				$templatePath = "registration.apply";
 			}
 			else {
 				$assign["errorMsg"] = "アカウント本登録処理に失敗しました。";
