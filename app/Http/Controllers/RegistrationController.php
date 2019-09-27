@@ -46,14 +46,13 @@ class RegistrationController extends Controller
 		$templatePath = "confirmRegistration";
 		$assign = [];
 
-		$this->user->setUsMail($request->input('registUsMail'));
-		$this->user->setUsName($request->input('registUsName'));
-		$this->user->setUsPassword($request->input('registUsPasswd'));
+		$this->user->setUsMail(		$request->input('registUsMail'));
+		$this->user->setUsName(		$request->input('registUsName'));
+		$this->user->setUsPassword(	$request->input('registUsPasswd'));
 		$db = DB::connection()->getPdo();
 		// バリデーション
 		$userDAO = new UserDAO($db);
-		$dbUser = $userDAO->findByUsMail($request->input('registUsMail'));
-		if (!empty($dbUser)) {
+		if (!empty($userDAO->findByUsMail($request->input('registUsMail')))) {
 			// 入力画面に戻る
 			$this->user->setUsMail('');	// メールアドレス欄を初期化
 			$assign["validationMsgs"] = "登録済みのメールアドレスです。別のメールアドレスを登録するか、ログインしてください。";
@@ -70,22 +69,20 @@ class RegistrationController extends Controller
 	{
 		$templatePath = "completeRegistration";
 		$assign = [];
-		$this->user->setUsMail($request->input('registUsMail'));
-		$this->user->setUsName($request->input('registUsName'));
-		$this->user->setUsPassword($request->input('registUsPasswd'));
-		$this->user->setUsMailVerifyToken(md5(uniqid().$this->user->getUsMail().$this->user->getUsName()));
+		$this->user->setUsMail(				$request->input('registUsMail'));
+		$this->user->setUsName(				$request->input('registUsName'));
+		$this->user->setUsPassword(			$request->input('registUsPasswd'));
+		$this->user->setUsMailVerifyToken(	md5(uniqid().$this->user->getUsMail().$this->user->getUsName()));
 		$db = DB::connection()->getPdo();
 		// ユーザー登録処理
 		$userDAO = new UserDAO($db);
-		$rpId = $userDAO->insert($this->user);
-		if ($rpId === -1) {
+		if ($userDAO->insert($this->user) === -1) {
 			$assign["errorMsg"] = "ユーザー情報登録に失敗しました。もう一度はじめからやり直してください。";
 			$templatePath = "error";
 		}
 		else {
 			$assign["user"] = $this->user;
-			// メール送信
-			Mail::to($this->user->getUsMail())->send(new RegisterShipped($this->user));
+			Mail::to($this->user->getUsMail())->send(new RegisterShipped($this->user));	// メール送信
 		}
 		return view($templatePath, $assign);
 	}

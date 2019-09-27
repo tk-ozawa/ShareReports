@@ -23,6 +23,8 @@
 			<div class="navbar-nav">
 				<ul class="navbar-nav">
 					<form class="form-inline my-2 my-lg-0" action="/sharereports/public/reports/searchList" method="GET">
+						<input type="hidden" name="case" value="id">
+						<input type="hidden" name="orderBy" value="ASC">
 						<li class="nav-item">
 							<select class="form-control mr-sm-2" name="usId" required>
 								<option id="" value="all" selected>全員</option>
