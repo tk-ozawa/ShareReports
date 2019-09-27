@@ -19,7 +19,8 @@
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><span>[アカウント登録]</span></li>
 				<li class="breadcrumb-item"><span style="color:gray;">アカウント登録情報確認</span></li>
-				<li class="breadcrumb-item"><span style="color:gray;">アカウント登録完了</span></li>
+				<li class="breadcrumb-item"><span style="color:gray;">アカウント仮登録完了</span></li>
+				<li class="breadcrumb-item"><span style="color:gray;">アカウント本登録完了</span></li>
 			</ol>
 		</nav>
 
