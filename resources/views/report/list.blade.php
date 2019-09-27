@@ -14,7 +14,7 @@
 	<link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
-	<nav class="navbar navbar-expand-sm navbar-light" style="background-color: lightblue;">
+	<nav class="navbar navbar-expand-sm navbar-light sticky-top" style="background-color: lightblue;">
 		<a class="navbar-brand" href="/sharereports/public/reports/showList">レポート管理システム</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navmenu2a" aria-controls="navmenu2a" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -59,7 +59,7 @@
 	<div class="container">
 		@if (session("flashMsg"))
 		<section id="flashMsg">
-			<p>{{ session("flashMsg") }}</p>
+			<div class="alert alert-primary" role="alert">{{ session("flashMsg") }}</div>
 		</section>
 		@endif
 
