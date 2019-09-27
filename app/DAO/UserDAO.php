@@ -27,18 +27,19 @@ class UserDAO
 
 
 	/**
-	 * ユーザー情報登録
+	 * ユーザー情報仮登録
 	 *
-	 * @param User $us 登録対象のユーザー情報
+	 * @param User $us 登録対象のユーザー情報(初期登録の為、アカウント無効化(auth:0))
 	 * @return int $id 登録したレコードID
 	 */
 	public function insert(User $us): int
 	{
-		$sqlInsert = "INSERT INTO users (us_mail, us_name, us_password, us_auth) VALUES (:us_mail, :us_name, :us_password, 2)";
+		$sqlInsert = "INSERT INTO users (us_mail, us_name, us_password, us_mail_verify_token, us_auth) VALUES (:us_mail, :us_name, :us_password, :us_mail_verify_token, 0)";
 		$stmt = $this->db->prepare($sqlInsert);
 		$stmt->bindValue(":us_mail", $us->getUsMail(), PDO::PARAM_STR);
 		$stmt->bindValue(":us_name", $us->getUsName(), PDO::PARAM_STR);
 		$stmt->bindValue(":us_password", password_hash($us->getUsPassword(), PASSWORD_DEFAULT), PDO::PARAM_STR);
+		$stmt->bindValue(":us_mail_verify_token", $us->getUsMailVerifyToken(), PDO::PARAM_STR);
 		$result = $stmt->execute();
 		if ($result) {
 			$id = $this->db->lastInsertId();
@@ -46,6 +47,23 @@ class UserDAO
 			$id = -1;
 		}
 		return $id;
+	}
+
+
+	/**
+	 * ユーザー情報本登録
+	 *
+	 * @param User $us 更新対象のユーザー情報
+	 * @return int $id 更新したレコードID
+	 */
+	public function updateUsAuth(User $us): int
+	{
+		$sqlUpdate = "UPDATE users SET us_auth = 2 WHERE id = :id";
+		$stmt = $this->db->prepare($sqlUpdate);
+		$stmt->bindValue(":id", $us->getId(), PDO::PARAM_INT);
+		$result = $stmt->execute();
+		$result = $stmt->execute();
+		return $result;
 	}
 
 
@@ -70,6 +88,31 @@ class UserDAO
 			$usList[] = $us;
 		}
 		return $usList;
+	}
+
+
+	/**
+	 * IDによるユーザー情報の検索
+	 *
+	 * @param int $id 検索するユーザーID
+	 * @return User $us ユーザー情報
+	 */
+	public function findById(int $id): ?User
+	{
+		$sqlSelect = "SELECT * FROM users WHERE id = :id";
+		$stmt = $this->db->prepare($sqlSelect);
+		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
+		$result = $stmt->execute();
+		$us = null;
+		if ($result && $row = $stmt->fetch()) {
+			$us = new User();
+			$us->setId($row['id']);
+			$us->setUsMail($row['us_mail']);
+			$us->setUsName($row['us_name']);
+			$us->setUsPassword($row['us_password']);
+			$us->setUsAuth($row['us_auth']);
+		}
+		return $us;
 	}
 
 
@@ -99,16 +142,16 @@ class UserDAO
 
 
 	/**
-	 * IDによるユーザー情報の検索
+	 * メール認証トークンによる仮登録ユーザー情報の検索
 	 *
-	 * @param int $id 検索するユーザーID
+	 * @param string $usMailVerifyToken 検索する仮登録ユーザーID
 	 * @return User $us ユーザー情報
 	 */
-	public function findById(int $id): ?User
+	public function findByUsMailVerifyToken(string $usMailVerifyToken): ?User
 	{
-		$sqlSelect = "SELECT * FROM users WHERE id = :id";
+		$sqlSelect = "SELECT * FROM users WHERE us_mail_verify_token = :us_mail_verify_token AND us_auth = 0";
 		$stmt = $this->db->prepare($sqlSelect);
-		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
+		$stmt->bindValue(":us_mail_verify_token", $usMailVerifyToken, PDO::PARAM_STR);
 		$result = $stmt->execute();
 		$us = null;
 		if ($result && $row = $stmt->fetch()) {

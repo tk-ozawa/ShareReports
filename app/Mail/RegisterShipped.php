@@ -18,17 +18,19 @@ class RegisterShipped extends Mailable
 		$this->mail = $sendData->getUsMail();
 		$this->name = $sendData->getUsName();
 		$this->passwd = $sendData->getUsPassword();
+		$this->token = $sendData->getUsMailVerifyToken();
 	}
 
 	public function build()
 	{
 		// return $this->subject('タイトルサンプル')->text('emails.templates.registers_mail');
 		return $this->view('emails.templates.registers_mail')
-					->subject('会員登録完了しました。')
+					->subject('会員情報仮登録が完了しました。(本登録はまだ完了していません)')
 					->with([
 						'mail' => $this->mail,
 						'name' => $this->name,
 						'passwd' => $this->passwd,
+						'token' => $this->token,
 					]);
 	}
 }

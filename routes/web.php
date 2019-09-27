@@ -4,7 +4,8 @@
  */
 Route::post("/prepareRegister", "RegistrationController@prepareRegister");	// アカウント登録画面表示処理
 Route::post("/confirmRegister", "RegistrationController@confirmRegister");	// アカウント登録情報確認画面表示処理
-Route::post("/completeRegister", "RegistrationController@register");	// アカウント登録情報確認画面表示処理
+Route::post("/completeRegister", "RegistrationController@register");	// アカウント仮登録情報確認画面表示処理
+Route::get("/applyRegistration/{token}", "RegistrationController@apply");	// アカウント本登録完了画面表示処理
 
 
 /**

@@ -60,7 +60,7 @@ class RegistrationController extends Controller
 	}
 
 	/**
-	 * アカウント登録処理 / アカウント登録完了画面表示処理
+	 * アカウント仮登録処理 / アカウント仮登録完了画面表示処理
 	 */
 	public function register(Request $request)
 	{
@@ -70,6 +70,7 @@ class RegistrationController extends Controller
 		$user->setUsMail($request->input('registUsMail'));
 		$user->setUsName($request->input('registUsName'));
 		$user->setUsPassword($request->input('registUsPasswd'));
+		$user->setUsMailVerifyToken(md5(uniqid().$user->getUsMail().$user->getUsName()));
 		$db = DB::connection()->getPdo();
 		// ユーザー登録処理
 		$userDAO = new UserDAO($db);
@@ -79,10 +80,37 @@ class RegistrationController extends Controller
 			$templatePath = "error";
 		}
 		else {
-			// us_mail_vertify_token
 			$assign["user"] = $user;
 			// メール送信
 			Mail::to($user->getUsMail())->send(new RegisterShipped($user));
+		}
+		return view($templatePath, $assign);
+	}
+
+	/**
+	 * アカウント本登録処理 / アカウント本登録完了画面表示処理
+	 */
+	public function apply(string $token, Request $request)
+	{
+		$templatePath = "applyRegistration";
+		$assign = [];
+		$db = DB::connection()->getPdo();
+		// ユーザー登録処理
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->findByUsMailVerifyToken($token);
+		if (empty($user)) {
+			$assign["errorMsg"] = "無効なトークンです。";
+			$templatePath = "error";
+		}
+		else {
+			$result = $userDAO->updateUsAuth($user);	// us_authを2に
+			if ($result) {
+				$assign["user"] = $user;
+			}
+			else {
+				$assign["errorMsg"] = "アカウント本登録処理に失敗しました。";
+				$templatePath = "error";
+			}
 		}
 		return view($templatePath, $assign);
 	}
