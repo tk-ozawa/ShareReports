@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -37,6 +38,7 @@ class ReportController extends Controller
 		}
 		else {
 			$reportDAO = new ReportDAO($this->db);
+			$reportList = [];
 			if (!empty($request->input('orderBy')) && !empty($request->input('case'))) {
 				$orderBy = true;	// メモ: DAOとBladeで扱うデータ型が違う
 				$orderByStr = $request->input('orderBy');
@@ -44,10 +46,8 @@ class ReportController extends Controller
 					$orderBy = false;
 				}
 				$assign["orderBy"] = $orderByStr;
-
 				$case = $request->input('case');
 				$assign["case"] = $case;
-
 				$reportList = $reportDAO->findAll($case, $orderBy);
 			}
 			else {
@@ -85,29 +85,28 @@ class ReportController extends Controller
 		else {
 			$case = $request->input('case');
 			$assign["case"] = $case;
-
 			$orderBy = true;	// メモ: DAOとBladeで扱うデータ型が違う
 			if ($request->input('orderBy') === 'DESC') {
 				$orderBy = false;
 			}
 			$assign["orderBy"] = $request->input('orderBy');
-
+			$userDAO = new UserDAO($this->db);
 			$usId = $request->input('usId');	// 絞り込み条件はテンプレートに返さない
-			$rcId = $request->input('rcId');
+			$user = null;
 			if ($usId !== 'all') {
 				// 該当ユーザーのユーザー情報("xxxさん"の投稿レポート~ で使う)
-				$userDAO = new UserDAO($this->db);
 				$user = $userDAO->findById((int)$usId);
 			}
 			else {
 				$user = new User();
 				$user->setId(0);
 			}
+			$assign["user"] = $user;
+			$rcId = $request->input('rcId');
 			$assign["rcId"] = $rcId;
-
 			$reportDAO = new ReportDAO($this->db);
 			$rpList = [];
-			if ($usId === 'all' && $rcId === 'all') {			// 全ユーザー & 全作業種類
+			if ($usId === 'all' && $rcId === 'all') {		// 全ユーザー & 全作業種類
 				return redirect("./reports/showList");
 			}
 			else if ($usId === 'all' && $rcId !== 'all') {	// 作業種類指定
@@ -120,10 +119,7 @@ class ReportController extends Controller
 				$rpList = $reportDAO->findByUsIdAndRcId((int)$usId, (int)$rcId, $case, $orderBy);
 			}
 			$assign["reportList"] = $rpList;
-
-			$assign["user"] = $user;
 			// ナビゲーションバーの検索欄用
-			$userDAO = new UserDAO($this->db);
 			$assign["userList"] = $userDAO->findAll();
 			$reportcateDAO = new ReportcateDAO($this->db);
 			$assign["reportCateList"] = $reportcateDAO->findAll();
@@ -151,7 +147,6 @@ class ReportController extends Controller
 			// ナビゲーションバーの検索欄用
 			$userDAO = new UserDAO($this->db);
 			$assign["userList"] = $userDAO->findAll();
-			$reportcateDAO = new ReportcateDAO($this->db);
 			$assign["reportCateList"] = $reportcateDAO->findAll();
 		}
 		return view($templatePath, $assign);
@@ -173,12 +168,12 @@ class ReportController extends Controller
 		}
 		else {
 			$rp = new Report();
-			$rp->setRpDate($request->input('rpDate'));
-			$rp->setRpTimeFrom($request->input('rpTimeFrom').':00');	// MySQLのtime型(HH:MM:SS)に合わせる
-			$rp->setRpTimeTo($request->input('rpTimeTo').':00');		// MySQLのtime型(HH:MM:SS)に合わせる
-			$rp->setReportCateId((int)$request->input('reportCateId'));
-			$rp->setRpContent($request->input('rpContent'));
-			$rp->setUserId($request->session()->get('usId'));
+			$rp->setRpDate(				$request->input('rpDate'));
+			$rp->setRpTimeFrom(			$request->input('rpTimeFrom').':00');	// MySQLのtime型(HH:MM:SS)に合わせる
+			$rp->setRpTimeTo(			$request->input('rpTimeTo').':00');		// 上に同じ
+			$rp->setReportCateId((int)	$request->input('reportCateId'));
+			$rp->setRpContent(			$request->input('rpContent'));
+			$rp->setUserId(				$request->session()->get('usId'));
 			// サーバ側バリデーション処理
 			if (strtotime($rp->getRpTimeFrom()) > strtotime($rp->getRpTimeTo())) {
 				$validationMsgs[] = "作業終了時刻が作業開始時刻以下のものが設定されています。正しい時刻を入力してください。";
@@ -195,14 +190,13 @@ class ReportController extends Controller
 				}
 			}
 			else {
+				$assign['validationMsgs'] = $validationMsgs;
 				// レポート登録画面に戻る
 				$reportcateDAO = new ReportcateDAO($this->db);
 				$assign['reportcateList'] = $reportcateDAO->findAll();
-				$assign['validationMsgs'] = $validationMsgs;
 				// ナビゲーションバーの検索欄用
 				$userDAO = new UserDAO($this->db);
 				$assign["userList"] = $userDAO->findAll();
-				$reportcateDAO = new ReportcateDAO($this->db);
 				$assign["reportCateList"] = $reportcateDAO->findAll();
 				}
 		}
@@ -232,20 +226,16 @@ class ReportController extends Controller
 			$reportDAO = new ReportDAO($this->db);
 			$rp = $reportDAO->findByRpId($rpId);
 			$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));	// HTML上の時刻の形式(HH:MM)に合わせる
-			$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));		// HTML上の時刻の形式(HH:MM)に合わせる
+			$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));		// 上に同じ
 			$assign['report'] = $rp;
 			// 作業種類情報
 			$reportcateDAO = new ReportcateDAO($this->db);
-			$rpcate = $reportcateDAO->findById($rp->getReportCateId());
-			$assign['reportcate'] = $rpcate;
+			$assign['reportcate'] = $reportcateDAO->findById($rp->getReportCateId());
 			// 投稿ユーザー情報
 			$userDAO = new UserDAO($this->db);
-			$us = $userDAO->findById($rp->getUserId());
-			$assign['user'] = $us;
+			$assign['user'] = $userDAO->findById($rp->getUserId());
 			// ナビゲーションバーの検索欄用
-			$userDAO = new UserDAO($this->db);
 			$assign["userList"] = $userDAO->findAll();
-			$reportcateDAO = new ReportcateDAO($this->db);
 			$assign["reportCateList"] = $reportcateDAO->findAll();
 	}
 		return view($templatePath, $assign);
@@ -273,15 +263,13 @@ class ReportController extends Controller
 			else {
 				$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));	// HTML上の時刻の形式(HH:MM)に合わせる
 				$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));		// HTML上の時刻の形式(HH:MM)に合わせる
+				$assign["report"] = $rp;
 				// 全作業種類取得
 				$reportcateDAO = new ReportcateDAO($this->db);
-				$rcList = $reportcateDAO->findAll();
-				$assign["report"] = $rp;
-				$assign["reportcateList"] = $rcList;
+				$assign["reportcateList"] = $reportcateDAO->findAll();
 				// ナビゲーションバーの検索欄用
 				$userDAO = new UserDAO($this->db);
 				$assign["userList"] = $userDAO->findAll();
-				$reportcateDAO = new ReportcateDAO($this->db);
 				$assign["reportCateList"] = $reportcateDAO->findAll();
 			}
 		}
@@ -303,43 +291,39 @@ class ReportController extends Controller
 		}
 		else {
 			$rp = new Report();
-			$rp->setId((int)$request->input("rpId"));
-			$rp->setRpDate($request->input("rpDate"));
-			$rp->setRpTimeFrom($request->input("rpTimeFrom").':00');	// MySQLのtime型(HH:MM:SS)に合わせる
-			$rp->setRpTimeTo($request->input("rpTimeTo").':00');		// MySQLのtime型(HH:MM:SS)に合わせる
-			$rp->setRpContent($request->input("rpContent"));
-			$rp->setReportCateId((int)$request->input("reportCateId"));
-			$rp->setUserId($request->session()->get('usId'));
-
+			$rp->setId((int)			$request->input("rpId"));
+			$rp->setRpDate(				$request->input("rpDate"));
+			$rp->setRpTimeFrom(			$request->input("rpTimeFrom").':00');	// MySQLのtime型(HH:MM:SS)に合わせる
+			$rp->setRpTimeTo(			$request->input("rpTimeTo").':00');		// MySQLのtime型(HH:MM:SS)に合わせる
+			$rp->setRpContent(			$request->input("rpContent"));
+			$rp->setReportCateId((int)	$request->input("reportCateId"));
+			$rp->setUserId(				$request->session()->get('usId'));
 			// サーバ側バリデーション処理
 			if (strtotime($rp->getRpTimeFrom()) > strtotime($rp->getRpTimeTo())) {
 				$validationMsgs[] = "作業終了時刻が作業開始時刻以下のものが設定されています。正しい時刻を入力してください。";
 			}
 			if (empty($validationMsgs)) {
 				$reportDAO = new ReportDAO($this->db);
-				$result = $reportDAO->update($rp);
-				if (empty($result)) {
+				if ($reportDAO->update($rp)) {
+					$isRedirect = true;
+				}
+				else {
 					$assign["errorMsg"] = "レポート情報更新に失敗しました。もう一度はじめからやり直してください。";
 					$templatePath = "error";
 				}
-				else {
-					$isRedirect = true;
-				}
 			}
 			else {
+				$assign["validationMsgs"] = $validationMsgs;
 				// レポート編集画面に戻る
 				$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));	// HTML上の時刻の形式(HH:MM)に合わせる
 				$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));		// HTML上の時刻の形式(HH:MM)に合わせる
+				$assign["report"] = $rp;
 				// 全作業種類取得
 				$reportcateDAO = new ReportcateDAO($this->db);
-				$rcList = $reportcateDAO->findAll();
-				$assign["report"] = $rp;
-				$assign["reportcateList"] = $rcList;
-				$assign["validationMsgs"] = $validationMsgs;
+				$assign["reportcateList"] = $reportcateDAO->findAll();
 				// ナビゲーションバーの検索欄用
 				$userDAO = new UserDAO($this->db);
 				$assign["userList"] = $userDAO->findAll();
-				$reportcateDAO = new ReportcateDAO($this->db);
 				$assign["reportCateList"] = $reportcateDAO->findAll();
 			}
 		}
@@ -373,16 +357,12 @@ class ReportController extends Controller
 			$assign['report'] = $rp;
 			// 作業種類情報
 			$reportcateDAO = new ReportcateDAO($this->db);
-			$rpcate = $reportcateDAO->findById($rp->getReportCateId());
-			$assign['reportcate'] = $rpcate;
+			$assign['reportcate'] = $reportcateDAO->findById($rp->getReportCateId());
 			// 投稿ユーザー情報
 			$userDAO = new UserDAO($this->db);
-			$us = $userDAO->findById($rp->getUserId());
-			$assign['user'] = $us;
+			$assign['user'] = $userDAO->findById($rp->getUserId());
 			// ナビゲーションバーの検索欄用
-			$userDAO = new UserDAO($this->db);
 			$assign["userList"] = $userDAO->findAll();
-			$reportcateDAO = new ReportcateDAO($this->db);
 			$assign["reportCateList"] = $reportcateDAO->findAll();
 	}
 		return view($templatePath, $assign);
@@ -404,8 +384,7 @@ class ReportController extends Controller
 		else {
 			$rpId = (int)$request->input("deleteRpId");
 			$reportDAO = new ReportDAO($this->db);
-			$result = $reportDAO->delete($rpId);
-			if ($result) {
+			if ($reportDAO->delete($rpId)) {
 				$isRedirect = true;
 			}
 			else {
