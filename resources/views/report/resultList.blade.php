@@ -54,6 +54,10 @@
 					</div>
 					<ul class="list-group list-group-flush">
 						<li class="list-group-item">報告者ID:{{ $report->getUserId() }}</li>
+						<li class="list-group-item">
+							<span>本文:</span>
+							<p>{!! mb_substr($report->getRpContent(), 0, 10) !!}@if(mb_strlen($report->getRpContent()) > 10) ... @endif</p>
+						</li>
 						<li class="list-group-item">作業日:{{ $report->getRpDate() }}</li>
 						<li class="list-group-item">
 							作業種類:
