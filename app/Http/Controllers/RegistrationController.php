@@ -12,24 +12,30 @@ use App\DAO\UserDAO;
 
 class RegistrationController extends Controller
 {
+	// コンストラクタインジェクション (newすることなくUserクラスのメソッドを呼び出せるようにする)
+	private $user;
+
+	public function __construct(User $user)
+	{
+		$this->user = $user;
+	}
+
 	/**
 	 * アカウント登録画面表示処理
 	 */
 	public function prepareRegister(Request $request)
 	{
-		$templatePath = "prepareRegistration";
-		$user = new User();
-		if (!empty($request->input('registUsMail'))) {
-			$user->setUsMail($request->input('registUsMail'));
+		if (!empty($registUsMail = $request->input('registUsMail'))) {
+			$this->user->setUsMail($registUsMail);
 		}
-		if (!empty($request->input('registUsName'))) {
-			$user->setUsName($request->input('registUsName'));
+		if (!empty($registUsName = $request->input('registUsName'))) {
+			$this->user->setUsName($registUsName);
 		}
-		if (!empty($request->input('registUsPasswd'))) {
-			$user->setUsPassword($request->input('registUsPasswd'));
+		if (!empty($registUsPasswd = $request->input('registUsPasswd'))) {
+			$this->user->setUsPassword($registUsPasswd);
 		}
-		$assign["user"] = $user;
-		return view($templatePath, $assign);
+		$assign["user"] = $this->user;
+		return view("prepareRegistration", $assign);
 	}
 
 	/**
@@ -39,23 +45,21 @@ class RegistrationController extends Controller
 	{
 		$templatePath = "confirmRegistration";
 		$assign = [];
-		$validationMsgs = [];
 
-		$user = new User();
-		$user->setUsMail($request->input('registUsMail'));
-		$user->setUsName($request->input('registUsName'));
-		$user->setUsPassword($request->input('registUsPasswd'));
+		$this->user->setUsMail($request->input('registUsMail'));
+		$this->user->setUsName($request->input('registUsName'));
+		$this->user->setUsPassword($request->input('registUsPasswd'));
 		$db = DB::connection()->getPdo();
 		// バリデーション
 		$userDAO = new UserDAO($db);
 		$dbUser = $userDAO->findByUsMail($request->input('registUsMail'));
 		if (!empty($dbUser)) {
-			$validationMsgs[] = "登録済みのメールアドレスです。別のメールアドレスを登録するか、ログインしてください。";
-			$user->setUsMail('');	// メールアドレス欄を初期化
+			// 入力画面に戻る
+			$this->user->setUsMail('');	// メールアドレス欄を初期化
+			$assign["validationMsgs"] = "登録済みのメールアドレスです。別のメールアドレスを登録するか、ログインしてください。";
 			$templatePath = "prepareRegistration";
-			$assign["validationMsgs"] = $validationMsgs;
 		}
-		$assign["user"] = $user;
+		$assign["user"] = $this->user;
 		return view($templatePath, $assign);
 	}
 
@@ -66,23 +70,22 @@ class RegistrationController extends Controller
 	{
 		$templatePath = "completeRegistration";
 		$assign = [];
-		$user = new User();
-		$user->setUsMail($request->input('registUsMail'));
-		$user->setUsName($request->input('registUsName'));
-		$user->setUsPassword($request->input('registUsPasswd'));
-		$user->setUsMailVerifyToken(md5(uniqid().$user->getUsMail().$user->getUsName()));
+		$this->user->setUsMail($request->input('registUsMail'));
+		$this->user->setUsName($request->input('registUsName'));
+		$this->user->setUsPassword($request->input('registUsPasswd'));
+		$this->user->setUsMailVerifyToken(md5(uniqid().$this->user->getUsMail().$this->user->getUsName()));
 		$db = DB::connection()->getPdo();
 		// ユーザー登録処理
 		$userDAO = new UserDAO($db);
-		$rpId = $userDAO->insert($user);
+		$rpId = $userDAO->insert($this->user);
 		if ($rpId === -1) {
 			$assign["errorMsg"] = "ユーザー情報登録に失敗しました。もう一度はじめからやり直してください。";
 			$templatePath = "error";
 		}
 		else {
-			$assign["user"] = $user;
+			$assign["user"] = $this->user;
 			// メール送信
-			Mail::to($user->getUsMail())->send(new RegisterShipped($user));
+			Mail::to($this->user->getUsMail())->send(new RegisterShipped($this->user));
 		}
 		return view($templatePath, $assign);
 	}
@@ -92,7 +95,7 @@ class RegistrationController extends Controller
 	 */
 	public function apply(string $token, Request $request)
 	{
-		$templatePath = "applyRegistration";
+		$templatePath = "error";
 		$assign = [];
 		$db = DB::connection()->getPdo();
 		// ユーザー登録処理
@@ -100,16 +103,14 @@ class RegistrationController extends Controller
 		$user = $userDAO->findByUsMailVerifyToken($token);
 		if (empty($user)) {
 			$assign["errorMsg"] = "無効なトークンです。";
-			$templatePath = "error";
 		}
 		else {
-			$result = $userDAO->updateUsAuth($user);	// us_authを2に
-			if ($result) {
+			if ($userDAO->updateUsAuth($user)) {	// us_authを2に
 				$assign["user"] = $user;
+				$templatePath = "applyRegistration";
 			}
 			else {
 				$assign["errorMsg"] = "アカウント本登録処理に失敗しました。";
-				$templatePath = "error";
 			}
 		}
 		return view($templatePath, $assign);
