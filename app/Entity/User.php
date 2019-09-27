@@ -73,6 +73,21 @@ class User
 
 
 	/**
+	 * メール認証用トークン
+	 */
+	private $usMailVerifyToken;
+
+	public function getUsMailVerifyToken(): ?string
+	{
+		return $this->usMailVerifyToken;
+	}
+
+	public function setUsMailVerifyToken(string $usMailVerifyToken): void
+	{
+		$this->usMailVerifyToken = $usMailVerifyToken;
+	}
+
+	/**
 	 * 権限
 	 * 		0:終了, 1:管理者, 2:一般
 	 */
