@@ -51,7 +51,7 @@
 				<span class="nav-item my-2 my-lg-0 mr-sm-2">ログイン中:{{ session('usName') }}様</span>
 			</div>
 			<a class="nav-item my-2 my-lg-0 mr-sm-2" href="/sharereports/public/reports/goAdd" role="button"><button class="btn btn-primary">レポート作成</button></a>
-			<a class="nav-item my-2 my-lg-0 mr-sm-2" href="/sharereports/public/reports/searchList?usId={{ session('usId') }}&rcId=all"><button class="btn btn-info">マイページ</button></a>
+			<a class="nav-item my-2 my-lg-0 mr-sm-2" href="/sharereports/public/reports/searchList?case=rp_date&orderBy=ASC?usId={{ session('usId') }}&rcId=all"><button class="btn btn-info">マイページ</button></a>
 			<div class="ml-auto">
 				<a class="nav-item btn btn-danger mr-sm-2 my-2 my-lg-0" href="/sharereports/public/logout" role="button">ログアウト</a>
 			</div>
