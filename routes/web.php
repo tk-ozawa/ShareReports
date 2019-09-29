@@ -32,3 +32,8 @@ Route::post("reports/edit", "ReportController@edit");	// レポート編集処�
 
 Route::get("/reports/confirmDelete/{rpId}", "ReportController@confirmDelete");	// レポート削除確認画面表示処理
 Route::post("/reports/delete", "ReportController@delete");	// レポート削除処理
+
+/**
+ * Ajax
+ */
+Route::get("/reports/Ajax/rcListByUsId", "ReportController@rcListByUsIdAjax");
