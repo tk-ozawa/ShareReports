@@ -55,5 +55,19 @@
 		</form>
 	</div>
 	<script src="{{ asset('js/app.js') }}"></script>
+	<script>
+		$(function(){
+			var loc=false;
+			$(window).bind("beforeunload", function(e) {
+				// 確認メッセージに表示させたい文字列
+				if (!loc) {
+					return "登録は完了していません｡";
+				}
+			});
+			// aリンクを遷移OKにする場合はこのコメントを外す
+			//$('a').click( function() {loc=true;});
+			$("form").submit(function(){loc=true;});
+		});
+	</script>
 </body>
 </html>
