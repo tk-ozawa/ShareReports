@@ -6,6 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" />
 	<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
@@ -26,7 +27,7 @@
 						<input type="hidden" name="case" value="id">
 						<input type="hidden" name="orderBy" value="ASC">
 						<li class="nav-item">
-							<select class="form-control mr-sm-2" name="usId" required>
+							<select class="form-control mr-sm-2" name="usId" id="selectUsId" required>
 								<option id="" value="all" selected>全員</option>
 								@foreach ($userList as $us)
 									<option id="" value="{{ $us->getId() }}">{{ $us->getId() }}:{{ $us->getUsName() }}</option>
@@ -34,12 +35,7 @@
 							</select>
 						</li>
 						<li class="nav-item">
-							<select class="form-control mr-sm-2" name="rcId" required>
-								<option id="" value="all" selected>全作業種類</option>
-								@foreach ($reportCateList as $rpCate)
-									<option id="" value="{{ $rpCate->getId() }}">{{ $rpCate->getId() }}:{{ $rpCate->getRcName() }}</option>
-								@endforeach
-							</select>
+							<select class="form-control mr-sm-2" name="rcId" id="selectRcId" required></select>
 						</li>
 						<li class="nav-item">
 							<button type="submit" class="btn btn-outline-success my-2 my-sm-0">検索</button>
@@ -61,7 +57,8 @@
 	<div class="container">
 		@yield('container')
 	</div>
-	<script src="{{ asset('js/app.js') }}"></script>
+	<script src="{{ asset('/js/app.js') }}"></script>
+	<script src="{{ asset('/js/Ajax.js') }}"></script>
 	@yield('script')
 </body>
 </html>
