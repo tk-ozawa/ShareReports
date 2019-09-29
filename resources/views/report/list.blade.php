@@ -45,7 +45,7 @@
 						<h3 class="card-title">ID:{{ $report->getId() }}</h3>
 					</div>
 					<ul class="list-group list-group-flush">
-						<li class="list-group-item">報告者ID:{{ $report->getUserId() }}</li>
+						<li class="list-group-item"><a href="/sharereports/public/reports/searchList?case=id&orderBy=ASC&usId={{ $report->getUserId() }}&rcId=all">報告者ID:{{ $report->getUserId() }}</a></li>
 						<li class="list-group-item">
 							<span>本文:</span>
 							<p>{!! mb_substr($report->getRpContent(), 0, 10) !!}@if(mb_strlen($report->getRpContent()) > 10) ... @endif</p>
@@ -53,7 +53,7 @@
 						<li class="list-group-item">作業日:{{ $report->getRpDate() }}</li>
 						<li class="list-group-item">
 							作業種類:
-							<img src="../img/reportcate/{{ $report->getReportCateId() }}.jpg">
+							<a href="/sharereports/public/reports/searchList?case=id&orderBy=ASC&usId=all&rcId={{ $report->getReportCateId() }}"><img src="../img/reportcate/{{ $report->getReportCateId() }}.jpg"></a>
 						</li>
 					</ul>
 					<div class="card-body">
