@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
@@ -399,4 +400,16 @@ class ReportController extends Controller
 		}
 		return $response;
 	}
+
+	/**
+	 * 絞り込み欄の作業種類自動取得処理
+	 */
+	public function rcListByUsIdAjax(Request $request)
+	{
+		$reportcateDAO = new ReportcateDAO($this->db);
+		$rcIdList = [];
+		$rcIdList = $reportcateDAO->findByUsId($request->input('usId'));
+		return response()->json($rcIdList);
+	}
+
 }
