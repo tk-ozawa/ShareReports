@@ -54,7 +54,7 @@ class ReportcateDAO
 	 * IDによる作業種類情報の検索
 	 *
 	 * @param int $id 検索する作業種類ID
-	 * @param Reportcate $rp 作業種類情報
+	 * @param Reportcate $rc 作業種類情報
 	 */
 	public function findById(int $id): Reportcate
 	{
@@ -74,19 +74,22 @@ class ReportcateDAO
 		return $rc;
 	}
 
+
 	/**
-	 * ユーザーIDによる登録済みの全作業種類ID検索
+	 * ユーザーIDによるレポート登録済みの全作業種類ID検索
 	 *
-	 * @param string $usId 検索するユーザーID(全員:all, 個人:数字)
+	 * @param string $usId 検索するユーザーID(全員:'all', 個人:数字)
+	 * @return array $rcIdList
 	 */
 	public function findByUsId($usId): array
 	{
+		$sqlSelect = "SELECT rc.id, rc.rc_name FROM reportcates rc INNER JOIN reports rp ON rp.reportcate_id = rc.id ";
 		if ($usId == 'all') {
-			$sqlSelect = "SELECT rc.id, rc.rc_name FROM reportcates rc INNER JOIN reports rp ON rp.reportcate_id = rc.id GROUP BY rc.id, rc.rc_name";
+			$sqlSelect .= "GROUP BY rc.id, rc.rc_name";
 			$stmt = $this->db->prepare($sqlSelect);
 		}
 		else {
-			$sqlSelect = "SELECT rc.id, rc.rc_name FROM reportcates rc INNER JOIN reports rp ON rp.reportcate_id = rc.id WHERE rp.user_id = :user_id GROUP BY rc.id, rc.rc_name";
+			$sqlSelect .= "WHERE rp.user_id = :user_id GROUP BY rc.id, rc.rc_name";
 			$stmt = $this->db->prepare($sqlSelect);
 			$stmt->bindValue(":user_id", $usId, PDO::PARAM_INT);
 		}
