@@ -5,6 +5,7 @@
 	<link href="{{ asset('css/app.css') }}" rel="stylesheet">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" />
 	<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
@@ -75,6 +76,19 @@
 				pwd.setAttribute('type', 'password');
 			}
 		}, false);
-	</script> 
+
+		$(function(){
+			var loc=false;
+			$(window).bind("beforeunload", function(e) {
+				// 確認メッセージに表示させたい文字列
+				if (!loc) {
+					return "入力は完了していません｡";
+				}
+			});
+			// aリンクを遷移OKにする場合はこのコメントを外す
+			//$('a').click( function() {loc=true;});
+			$("form").submit(function(){loc=true;});
+		});
+	</script>
 </body>
 </html>

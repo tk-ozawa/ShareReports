@@ -54,8 +54,9 @@ class RegistrationController extends Controller
 		$userDAO = new UserDAO($db);
 		if (!empty($userDAO->findByUsMail($request->input('registUsMail')))) {
 			// 入力画面に戻る
+			$validationMsgs[] = "'".$this->user->getUsMail()."'は登録済みのメールアドレスです。別のメールアドレスを登録するか、ログインしてください。";
 			$this->user->setUsMail('');	// メールアドレス欄を初期化
-			$assign["validationMsgs"] = "登録済みのメールアドレスです。別のメールアドレスを登録するか、ログインしてください。";
+			$assign["validationMsgs"] = $validationMsgs;
 			$templatePath = "registration.prepare";
 		}
 		$assign["user"] = $this->user;
