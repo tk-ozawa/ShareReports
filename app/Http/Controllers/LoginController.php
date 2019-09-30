@@ -14,7 +14,8 @@ class LoginController extends Controller
 	 */
 	public function goLogin()
 	{
-		return view("login");
+		$assign["loginUsMail"] = null;
+		return view("login", $assign);
 	}
 
 	/**
@@ -25,6 +26,7 @@ class LoginController extends Controller
 		$isRedirect = false;
 		$assign = [];
 		$validationMsgs = [];
+		$loginUsMail = null;
 
 		// POSTの取得
 		$loginUsMail = trim($request->input("loginUsMail"));
