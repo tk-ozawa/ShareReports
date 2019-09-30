@@ -26,7 +26,6 @@ class LoginController extends Controller
 		$isRedirect = false;
 		$assign = [];
 		$validationMsgs = [];
-		$loginUsMail = null;
 
 		// POSTの取得
 		$loginUsMail = trim($request->input("loginUsMail"));
