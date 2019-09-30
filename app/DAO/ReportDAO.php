@@ -42,8 +42,7 @@ class ReportDAO
 		$stmt->bindValue(":rp_content", $rp->getRpContent(), PDO::PARAM_STR);
 		$stmt->bindValue(":reportcate_id", $rp->getReportCateId(), PDO::PARAM_INT);
 		$stmt->bindValue(":user_id", $rp->getUserId(), PDO::PARAM_INT);
-		$result = $stmt->execute();
-		if ($result) {
+		if ($stmt->execute()) {
 			$id = $this->db->lastInsertId();
 		} else {
 			$id = -1;

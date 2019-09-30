@@ -62,7 +62,6 @@ class UserDAO
 		$stmt = $this->db->prepare($sqlUpdate);
 		$stmt->bindValue(":id", $us->getId(), PDO::PARAM_INT);
 		$result = $stmt->execute();
-		$result = $stmt->execute();
 		return $result;
 	}
 
