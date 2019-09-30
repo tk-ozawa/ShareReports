@@ -32,7 +32,7 @@
 				<div class="col">
 					<label for="datetimepicker1" class="pt-2 pr-2">作業日</label>
 					<div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-						<input type="text" class="form-control datetimepicker-input" name="rpDate" data-target="#datetimepicker1" value="{{ $report->getRpDate() }}" required />
+						<input type="date" class="form-control datetimepicker-input" name="rpDate" data-target="#datetimepicker1" value="{{ $report->getRpDate() }}" required />
 						<div class="input-group-prepend" data-target="#datetimepicker1" data-toggle="datetimepicker">
 							<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
 						</div>
@@ -43,7 +43,7 @@
 				<div class="col">
 					<label for="datetimepicker2" class="pt-2 pr-2">作業開始時刻</label>
 					<div class="input-group date" id="datetimepicker2" data-target-input="nearest">
-						<input type="text" class="form-control datetimepicker-input" name="rpTimeFrom" data-target="#datetimepicker2" value="{{ $report->getRpTimeFrom() }}" required />
+						<input type="time" class="form-control datetimepicker-input" name="rpTimeFrom" data-target="#datetimepicker2" value="{{ $report->getRpTimeFrom() }}" required />
 						<div class="input-group-prepend" data-target="#datetimepicker2" data-toggle="datetimepicker">
 							<div class="input-group-text"><i class="far fa-clock"></i></div>
 						</div>
@@ -52,7 +52,7 @@
 				<div class="col">
 					<label for="datetimepicker3" class="pt-2 pr-2">作業終了時刻</label>
 					<div class="input-group date" id="datetimepicker3" data-target-input="nearest">
-						<input type="text" class="form-control datetimepicker-input" name="rpTimeTo" data-target="#datetimepicker3" value="{{ $report->getRpTimeTo() }}" required />
+						<input type="time" class="form-control datetimepicker-input" name="rpTimeTo" data-target="#datetimepicker3" value="{{ $report->getRpTimeTo() }}" required />
 						<div class="input-group-prepend" data-target="#datetimepicker3" data-toggle="datetimepicker">
 							<div class="input-group-text"><i class="far fa-clock"></i></div>
 						</div>
