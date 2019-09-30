@@ -21,7 +21,7 @@ class ReportController extends Controller
 {
 	public function __construct()
 	{
-		$this->db = DB::connection()->getPdo();;
+		$this->db = DB::connection()->getPdo();
 	}
 
 	/**
@@ -142,12 +142,10 @@ class ReportController extends Controller
 			$templatePath = "login";
 		}
 		else {
-			// reportcatesテーブルの全情報を取得
-			$reportcateDAO = new ReportcateDAO($this->db);
-			$assign['reportcateList'] = $reportcateDAO->findAll();
 			// ナビゲーションバーの検索欄用
 			$userDAO = new UserDAO($this->db);
 			$assign["userList"] = $userDAO->findAll();
+			$reportcateDAO = new ReportcateDAO($this->db);
 			$assign["reportCateList"] = $reportcateDAO->findAll();
 		}
 		return view($templatePath, $assign);
@@ -191,13 +189,12 @@ class ReportController extends Controller
 				}
 			}
 			else {
-				$assign['validationMsgs'] = $validationMsgs;
 				// レポート登録画面に戻る
-				$reportcateDAO = new ReportcateDAO($this->db);
-				$assign['reportcateList'] = $reportcateDAO->findAll();
+				$assign['validationMsgs'] = $validationMsgs;
 				// ナビゲーションバーの検索欄用
 				$userDAO = new UserDAO($this->db);
 				$assign["userList"] = $userDAO->findAll();
+				$reportcateDAO = new ReportcateDAO($this->db);
 				$assign["reportCateList"] = $reportcateDAO->findAll();
 				}
 		}
@@ -265,12 +262,10 @@ class ReportController extends Controller
 				$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));	// HTML上の時刻の形式(HH:MM)に合わせる
 				$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));		// HTML上の時刻の形式(HH:MM)に合わせる
 				$assign["report"] = $rp;
-				// 全作業種類取得
-				$reportcateDAO = new ReportcateDAO($this->db);
-				$assign["reportcateList"] = $reportcateDAO->findAll();
 				// ナビゲーションバーの検索欄用
 				$userDAO = new UserDAO($this->db);
 				$assign["userList"] = $userDAO->findAll();
+				$reportcateDAO = new ReportcateDAO($this->db);
 				$assign["reportCateList"] = $reportcateDAO->findAll();
 			}
 		}
@@ -319,12 +314,10 @@ class ReportController extends Controller
 				$rp->setRpTimeFrom(substr($rp->getRpTimeFrom(), 0, -3));	// HTML上の時刻の形式(HH:MM)に合わせる
 				$rp->setRpTimeTo(substr($rp->getRpTimeTo(), 0, -3));		// HTML上の時刻の形式(HH:MM)に合わせる
 				$assign["report"] = $rp;
-				// 全作業種類取得
-				$reportcateDAO = new ReportcateDAO($this->db);
-				$assign["reportcateList"] = $reportcateDAO->findAll();
 				// ナビゲーションバーの検索欄用
 				$userDAO = new UserDAO($this->db);
 				$assign["userList"] = $userDAO->findAll();
+				$reportcateDAO = new ReportcateDAO($this->db);
 				$assign["reportCateList"] = $reportcateDAO->findAll();
 			}
 		}
