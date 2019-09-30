@@ -2,6 +2,10 @@
 
 @section('title', 'レポート検索結果')
 
+@section('head-script')
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+@endsection
+
 @section('breadcrumb')
 	<nav aria-label="パンくずリスト">
 		<ol class="breadcrumb">
